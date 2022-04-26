@@ -1,0 +1,32 @@
+{
+  "name": "asthobin",
+  "version": "0.0.1",
+  "description": "AsthoBin is a simple website to share pieces of code with a URL, written in Rust.",
+  "license": "GNU General Public License v3.0",
+  "scripts": {
+    "build": "pnpx tailwindcss build -i static/assets/css/index.css -o static/assets/css/tailwind/index.css -c tailwind.config.js",
+    "autoprefixer": "postcss static/assets/css/tailwind/index.css -u autoprefixer --no-map -o static/assets/css/tailwind/index.css",
+    "minify": "postcss static/assets/css/tailwind/index.css -u cssnano --no-map -o static/assets/css/tailwind/index.css",
+
+    "dev": "pnpm run build",
+    "prod": "pnpm run build && pnpm run autoprefixer && pnpm run minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Asthowen/AsthoBin.git"
+  },
+  "author": "Asthowen <contact@asthowen.fr>",
+  "bugs": {
+    "url": "https://github.com/Asthowen/AsthoBin/issues"
+  },
+  "homepage": "https://github.com/Asthowen/AsthoBin#README.md",
+  "devDependencies": {
+    "tailwindcss": "^3.0.24"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.4",
+    "cssnano": "^5.1.7",
+    "postcss": "^8.4.12",
+    "postcss-cli": "^9.1.0"
+  }
+}

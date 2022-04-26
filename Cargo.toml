@@ -1,0 +1,32 @@
+[package]
+name = "asthobin"
+version = "0.0.1"
+authors = ["Asthowen<contact@asthowen.fr>"]
+edition = "2021"
+description = "AsthoBin is a simple website to share pieces of code with a URL, written in Rust."
+repository = "https://github.com/Asthowen/AsthoBin"
+readme = "README.md"
+license = "GPL-3.0"
+keywords = ["asthobin", "paste", "rust"]
+
+[profile.release]
+codegen-units = 1
+strip = true
+lto = true
+
+[dependencies]
+diesel = { version = "1.4", features = ["mysql", "r2d2"] }
+tokio = { version = "1.17", features = ["full"] }
+html-escape = "0.2"
+actix-files = "0.6"
+actix-cors = "0.6"
+env_logger = "0.9"
+askama = "0.11"
+dotenv = "0.15"
+actix-web = "4"
+chrono = "0.4"
+actix = "0.13"
+serde = "1.0"
+rand = "0.8"
+r2d2 = "0.8"
+log = "0.4"
