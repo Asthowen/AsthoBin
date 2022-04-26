@@ -1,6 +1,6 @@
+use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use actix_web::{web, HttpResponse, Result, HttpRequest};
-use diesel::r2d2::{ConnectionManager, Pool};
 use crate::database::models::AsthoBin;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
@@ -16,7 +16,10 @@ struct Code {
 
 pub async fn document(pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>, query: HttpRequest) -> Result<HttpResponse> {
     let document_id: String = query.match_info().get("document_id").unwrap().parse().unwrap();
-    let conn = pool.get().expect("couldn't get db connection from pool");
+    let conn: PooledConnection<ConnectionManager<MysqlConnection>> = match pool.get() {
+        Ok(pool) => pool,
+        Err(_) => return Ok(HttpResponse::InternalServerError().finish())
+    };
 
     let exists = asthobin_dsl::asthobin
         .filter(
@@ -31,7 +34,7 @@ pub async fn document(pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>,
     if exists.is_some() {
         let code: String = exists.unwrap().content;
         let s = Code {
-            code: html_escape::encode_text(&code).to_string()
+            code: html_escape::encode_script(&code).to_string()
         }
             .render()
             .unwrap();

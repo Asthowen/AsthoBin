@@ -18,13 +18,13 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
         </svg></a>
     </div>
-    <pre class="p-8" id="codeAreaDivPre"><code class="w-screen h-screen p-8" id="codeAreaDiv" spellcheck="false">{{ code }}</code></pre>
+    <pre class="hidden" id="codeAreaPre"><code class="w-screen h-screen p-8" id="codeArea" spellcheck="false">{{ code }}</code></pre>
     <script src="/static/assets/javascript/highlight.min.js"></script>
     <script>
-        hljs.highlightElement(document.getElementById('codeAreaDiv'));
-        document.getElementById('codeAreaDivPre').classList.remove('p-8');
+        hljs.highlightElement(document.getElementById('codeArea'));
+        setTimeout(() => document.getElementById('codeAreaPre').classList.remove('hidden'), 100);
         generateTxtFile = () => {
-            let data = new Blob([document.getElementById('codeAreaDiv').textContent], {type: 'text/plain'});
+            let data = new Blob([document.getElementById('codeArea').textContent], {type: 'text/plain'});
             const objectURL = window.URL.createObjectURL(data);
             let a = document.createElement('a');
             a.style.display = 'none';

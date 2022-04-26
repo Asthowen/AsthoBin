@@ -10,24 +10,18 @@
     white-space: pre;
     scrollbar-width: thin;
     scrollbar-color: #303030 #202020;
-}
-#codeAreaDiv {
-    font-family: 'Cascadia Code', sans-serif;
-    scrollbar-width: thin;
-    scrollbar-color: #303030 #202020;
-    white-space: pre;
     color: #f8f8f2 !important;
 }
-#codeArea::-webkit-scrollbar, #codeAreaDiv::-webkit-scrollbar{
+#codeArea::-webkit-scrollbar {
     width: 4px;
 }
-#codeArea::-webkit-scrollbar-track, #codeAreaDiv::-webkit-scrollbar-track {
+#codeArea::-webkit-scrollbar-track {
     background: #202020;
 }
-#codeArea::-webkit-scrollbar-thumb, #codeAreaDiv::-webkit-scrollbar-thumb {
+#codeArea::-webkit-scrollbar-thumb {
     background: #303030;
 }
-#codeArea::-webkit-scrollbar-thumb:hover, #codeAreaDiv::-webkit-scrollbar-thumb:hover {
+#codeArea::-webkit-scrollbar-thumb:hover {
     background: #303030;
 }
 .hljs {
@@ -36,55 +30,31 @@
     background: #202020;
     color: #f8f8f2 !important;
 }
-.hljs-built_in,
-.hljs-selector-tag,
-.hljs-section,
-.hljs-link {
+.hljs-built_in, .hljs-selector-tag, .hljs-section, .hljs-link {
     color: #8be9fd;
 }
 .hljs-keyword {
     color: #ff79c6;
 }
-.hljs,
-.hljs-subst {
+.hljs, .hljs-subst {
     color: #f8f8f2;
 }
-.hljs-title,
-.hljs-attr,
-.hljs-meta-keyword {
+.hljs-title, .hljs-attr, .hljs-meta-keyword {
     font-style: italic;
     color: #50fa7b;
 }
-.hljs-string,
-.hljs-meta,
-.hljs-name,
-.hljs-type,
-.hljs-symbol,
-.hljs-bullet,
-.hljs-addition,
-.hljs-variable,
-.hljs-template-tag,
-.hljs-template-variable {
+.hljs-string, .hljs-meta, .hljs-name, .hljs-type,
+.hljs-symbol, .hljs-bullet, .hljs-addition, .hljs-variable, .hljs-template-tag, .hljs-template-variable {
     color: #f1fa8c;
 }
-.hljs-comment,
-.hljs-quote,
-.hljs-deletion {
+.hljs-comment, .hljs-quote, .hljs-deletion {
     color: #6272a4;
 }
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-literal,
-.hljs-title,
-.hljs-section,
-.hljs-doctag,
-.hljs-type,
-.hljs-name,
-.hljs-strong {
+.hljs-keyword, .hljs-selector-tag,
+.hljs-literal, .hljs-title, .hljs-section, .hljs-doctag, .hljs-type, .hljs-name, .hljs-strong {
     font-weight: bold;
 }
-.hljs-literal,
-.hljs-number {
+.hljs-literal, .hljs-number {
     color: #bd93f9;
 }
 .hljs-emphasis {
