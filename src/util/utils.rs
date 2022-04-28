@@ -9,3 +9,6 @@ pub fn exit_if_keys_not_exist(keys: &[&str]) {
         exit_if_key_not_exist(key);
     }
 }
+pub fn get_key(key_name: &str) -> String {
+    std::env::var(key_name).unwrap()
+}

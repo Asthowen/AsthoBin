@@ -1,4 +1,5 @@
 use actix_web::{HttpResponse, Result};
+use crate::util::utils::get_key;
 use askama::Template;
 
 #[derive(Template)]
@@ -9,7 +10,7 @@ struct Index {
 
 pub async fn index() -> Result<HttpResponse> {
     let s = Index {
-        base_url: std::env::var("BASE_URL").unwrap()
+        base_url: get_key("BASE_URL")
     }
         .render()
         .unwrap();

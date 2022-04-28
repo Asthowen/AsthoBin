@@ -3,6 +3,7 @@ use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use actix_web::{web, HttpResponse, Result, HttpRequest};
 use crate::database::models::AsthoBin;
 use diesel::mysql::MysqlConnection;
+use crate::util::utils::get_key;
 use diesel::prelude::*;
 use diesel::RunQueryDsl;
 use askama::Template;
@@ -40,6 +41,6 @@ pub async fn document(pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>,
             .unwrap();
         Ok(HttpResponse::Ok().content_type("text/html").body(s))
     } else {
-        Ok(HttpResponse::Found().append_header(("Location", std::env::var("BASE_URL").unwrap())).finish())
+        Ok(HttpResponse::Found().append_header(("Location", get_key("BASE_URL"))).finish())
     }
 }
