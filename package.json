@@ -4,12 +4,15 @@
   "description": "AsthoBin is a simple website to share pieces of code with a URL, written in Rust.",
   "license": "GNU General Public License v3.0",
   "scripts": {
-    "build": "pnpx tailwindcss build -i static/assets/css/index.css -o static/assets/css/tailwind/index.css -c tailwind.config.js",
+    "build": "npx tailwindcss build -i static/assets/css/index.css -o static/assets/css/tailwind/index.css -c tailwind.config.js",
+    "build-pnpm": "pnpx tailwindcss build -i static/assets/css/index.css -o static/assets/css/tailwind/index.css -c tailwind.config.js",
     "autoprefixer": "postcss static/assets/css/tailwind/index.css -u autoprefixer --no-map -o static/assets/css/tailwind/index.css",
     "minify": "postcss static/assets/css/tailwind/index.css -u cssnano --no-map -o static/assets/css/tailwind/index.css",
 
-    "dev": "pnpm run build",
-    "prod": "pnpm run build && pnpm run autoprefixer && pnpm run minify"
+    "dev": "npm run build",
+    "prod": "npm run build && npm run autoprefixer && npm run minify",
+    "dev-pnpm": "pnpm run build",
+    "prod-pnpm": "pnpm run build-pnpm && pnpm run autoprefixer && pnpm run minify"
   },
   "repository": {
     "type": "git",

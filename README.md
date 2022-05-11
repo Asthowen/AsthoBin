@@ -26,16 +26,39 @@
 * Low RAM consumption
 * Responsive UI
 * Code coloring with [highlight.js](https://highlightjs.org/)
-* Automatic deletion after 7 days
+* Automatic deletion after custom time
 
 ## TODO
 - [ ] GitHub actions
 - [ ] Unit tests
 - [ ] Docker image
-- [ ] Support de PostgreSQL
+- [ ] Support of PostgreSQL
 
 ## Installation
-TODO
+### Docker
+Start by cloning the repo:
+```bash
+git clone https://github.com/Asthowen/AsthoBin.git
+```
+
+Now switch to project folder and build the container with docker-compose:
+```bash
+cd AsthoBin && docker-compose -f ./docker/docker-compose.yml up -d --build
+```
+
+### Manually
+Start by cloning the repo:
+```bash
+git clone https://github.com/Asthowen/AsthoBin.git
+```
+**For the next step you need to have Rust and cargo installed on your PC, for that follow the [official documentation](https://www.rust-lang.org/tools/install).**
+
+Now switch to project folder and compile a release:
+```bash
+cd AsthoBin && cargo build --release
+```
+
+Your executable will be in the `target/release/` folder, it is named `asthonbin`.
 
 ## Contributors
 [<img width="45" src="https://avatars.githubusercontent.com/u/59535754?v=4" alt="Asthowen">](https://github.com/Asthowen)
