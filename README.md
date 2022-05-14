@@ -60,6 +60,9 @@ cd AsthoBin && cargo build --release
 
 Your executable will be in the `target/release/` folder, it is named `asthonbin`.
 
+## Configuration
+To configure this bot, just use the example configuration: [`example.env`](https://github.com/Asthowen/DiscordBotPihole/blob/main/example.env), you just have to rename it to `.env` and complete it.
+
 ## Contributors
 [<img width="45" src="https://avatars.githubusercontent.com/u/59535754?v=4" alt="Asthowen">](https://github.com/Asthowen)
 
