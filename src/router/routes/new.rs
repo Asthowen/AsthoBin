@@ -40,6 +40,6 @@ pub async fn new(pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>, byte
         .map_err(|err| log::error!("{:?}", err))
         .ok();
 
-    let data: &str = r#"{"status": "success"}"#;
+    let data: String = r#"{"status": "success", "key": ""#.to_owned() + &random_url + r#""}"#;
     Ok(HttpResponse::Ok().append_header(("Location", format!("/{}", random_url))).content_type("text/json").body(data))
 }
