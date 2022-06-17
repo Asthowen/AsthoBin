@@ -1,15 +1,13 @@
 use actix_web::{web, App, HttpResponse, HttpServer};
 use asthobin::util::utils::exit_if_keys_not_exist;
+use asthobin::router::router_register::router;
 use diesel::r2d2::{ConnectionManager, Pool};
 use asthobin::util::logger::init_logger;
-use asthobin::router::router::router;
 use diesel::mysql::MysqlConnection;
 use asthobin::database::mysql;
 use asthobin::task::delete;
 use actix_cors::Cors;
 use std::sync::Arc;
-use actix_web;
-use tokio;
 
 
 fn main() {

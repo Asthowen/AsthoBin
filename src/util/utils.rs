@@ -1,5 +1,5 @@
 pub fn exit_if_key_not_exist(key: &str) {
-    if let Err(_) = std::env::var(key) {
+    if std::env::var(key).is_err() {
         log::error!("The key {} does not exist in the .env file.", key);
         std::process::exit(1);
     }
