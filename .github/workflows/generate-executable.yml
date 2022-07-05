@@ -6,9 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  generate-executables:
-    name: Generation of Linux executable
-    runs-on: ubuntu-latest.version
+  generate-linux-executables:
+    name: Build & publish for ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        name: [aarch64-unknown-linux-gnu, armv7-unknown-linux-gnueabihf, i686-unknown-linux-gnu, i686-unknown-linux-musl, mips-unknown-linux-gnu, mips64-unknown-linux-gnuabi64, mips64el-unknown-linux-gnuabi64, mipsel-unknown-linux-gnu, powerpc-unknown-linux-gnu, powerpc64-unknown-linux-gnu, powerpc64le-unknown-linux-gnu, arm-unknown-linux-gnueabi,x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl]
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,40 +22,40 @@ jobs:
         with:
           profile: minimal
           toolchain: stable
-          override: true
-          target: x86_64-unknown-linux-musl
+          target: ${{ matrix.name }}
 
-      - name: Install MySQL
-        uses: shogo82148/actions-setup-mysql@v1
-        with:
-          mysql-version: '8.0'
-
-      - name: Install dependencies
-        id: install_dependencies
+      - name: Get asthobin version
+        id: asthobin_version
         run: |
-          cargo install cargo-get && cargo clean
+          cargo install cargo-get
           echo "::set-output name=APP_VERSION::$(cargo get version)"
 
-      - name: Get release
+      - name: Get latest release
         id: get_release
         uses: leahlundqvist/get-release@v1.3.1
         with:
-          tag_name: ${{ steps.install_dependencies.outputs.APP_VERSION }}
+          tag_name: ${{ steps.asthobin_version.outputs.APP_VERSION }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
 
-      - name: Build Linux x86_64
-        uses: actions-rs/cargo@v1
+      - name: Use GitHub cache
+        uses: actions/cache@v2
         with:
-          command: build
-          args: --release --target x86_64-unknown-linux-musl
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Upload Linux x86_64 executable to releases
+      - name: Build
+        run: cargo build --release --locked
+
+      - name: Upload executable to releases
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
-          asset_path: ./target/x86_64-unknown-linux-musl/release/asthobin
-          asset_name: asthobin-${{ steps.install_dependencies.outputs.APP_VERSION }}-x86_64-linux
+          asset_path: ./target/release/asthobin
+          asset_name: asthobin-${{ steps.asthobin_version.outputs.APP_VERSION }}-${{ matrix.name }}
           asset_content_type: application/octet-stream

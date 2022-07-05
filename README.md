@@ -29,7 +29,8 @@
 * Automatic deletion after custom time
 
 ## TODO
-- [ ] GitHub actions
+- [x] GitHub actions
+- [ ] Add code documentation
 - [ ] Unit tests
 - [ ] Docker image
 - [ ] Support of PostgreSQL
