@@ -12,7 +12,7 @@ pub async fn delete(pool: &Pool<ConnectionManager<MysqlConnection>>) {
     };
 
     let delete_time: u64 = std::env::var("DELETE_TIME")
-        .unwrap_or_else(|_| String::from("604800"))
+        .unwrap_or("604_800".to_owned())
         .parse::<u64>()
         .unwrap_or(604800);
 

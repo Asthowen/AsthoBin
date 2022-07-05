@@ -22,7 +22,7 @@ pub async fn document(pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>,
         Err(_) => return Ok(HttpResponse::InternalServerError().finish())
     };
 
-    let exists = asthobin_dsl::asthobin
+    let document: Option<AsthoBin> = asthobin_dsl::asthobin
         .filter(
             asthobin_dsl::id
                 .like(document_id)
@@ -32,14 +32,14 @@ pub async fn document(pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>,
         .map_err(|e| (http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
         .unwrap();
 
-    if exists.is_some() {
-        let code: String = exists.unwrap().content;
-        let s = Code {
+    if document.is_some() {
+        let code: String = document.unwrap().content;
+        let render: String = Code {
             code: html_escape::encode_script(&code).to_string()
         }
             .render()
             .unwrap();
-        Ok(HttpResponse::Ok().content_type("text/html").body(s))
+        Ok(HttpResponse::Ok().content_type("text/html").body(render))
     } else {
         Ok(HttpResponse::Found().append_header(("Location", get_key("BASE_URL"))).finish())
     }

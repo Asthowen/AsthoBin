@@ -1,11 +1,9 @@
 use actix_web::{web, App, HttpResponse, HttpServer};
 use asthobin::util::utils::exit_if_keys_not_exist;
 use asthobin::router::router_register::router;
-use diesel::r2d2::{ConnectionManager, Pool};
 use asthobin::util::logger::init_logger;
-use diesel::mysql::MysqlConnection;
 use asthobin::database::mysql;
-use asthobin::task::delete;
+use asthobin::tasks::delete;
 use actix_cors::Cors;
 use std::sync::Arc;
 
@@ -28,14 +26,14 @@ async fn async_main() {
 
     exit_if_keys_not_exist(&["DATABASE_URL", "BASE_URL"]);
 
-    let host: String = std::env::var("HOST").unwrap_or_else(|_| String::from("127.0.0.1"));
-    let port: String = std::env::var("PORT").unwrap_or_else(|_| String::from("8080"));
-    let cors_origin: String = std::env::var("CORS_ORIGIN").unwrap_or_else(|_| "".to_string());
-    let pool: Pool<ConnectionManager<MysqlConnection>> = mysql::get_pool();
+    let host: String = std::env::var("HOST").unwrap_or("127.0.0.1".to_owned());
+    let port: String = std::env::var("PORT").unwrap_or("8080".to_owned());
+    let cors_origin: String = std::env::var("CORS_ORIGIN").unwrap_or("".to_owned());
+    let pool: mysql::MysqlPool = mysql::get_pool();
 
-    let pool_arc: Arc<Pool<ConnectionManager<MysqlConnection>>> = Arc::new(pool.clone());
+    let pool_arc: Arc<mysql::MysqlPool> = Arc::new(pool.clone());
     tokio::task::spawn(async move {
-        let pool_arc: &Pool<ConnectionManager<MysqlConnection>> = &*pool_arc;
+        let pool_arc: &mysql::MysqlPool = &*pool_arc;
 
         loop {
             delete::delete(pool_arc).await;
@@ -46,8 +44,8 @@ async fn async_main() {
     log::info!("Start server on {}:{}...", host, port);
 
     HttpServer::new(move || {
-        let mut cors = Cors::default()
-            .allowed_methods(vec!["GET", "POST"])
+        let mut cors: Cors = Cors::default()
+            .allowed_methods(vec!["GET"])
             .allow_any_header()
             .max_age(3600);
 

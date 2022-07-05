@@ -9,10 +9,10 @@ struct Index {
 }
 
 pub async fn index() -> Result<HttpResponse> {
-    let s = Index {
+    let render: String = Index {
         base_url: get_key("BASE_URL")
     }
         .render()
         .unwrap();
-    Ok(HttpResponse::Ok().content_type("text/html").body(s))
+    Ok(HttpResponse::Ok().content_type("text/html").body(render))
 }
