@@ -18,10 +18,7 @@
 #codeArea::-webkit-scrollbar-track {
     background: #202020;
 }
-#codeArea::-webkit-scrollbar-thumb {
-    background: #303030;
-}
-#codeArea::-webkit-scrollbar-thumb:hover {
+#codeArea::-webkit-scrollbar-thumb, #codeArea::-webkit-scrollbar-thumb:hover  {
     background: #303030;
 }
 .hljs {

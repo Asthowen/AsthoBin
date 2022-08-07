@@ -8,13 +8,12 @@ services:
     image: astho-bin:latest.version
     container_name: astho-bin
     restart: always
-    network_mode: 'host'
-    env_file:
-      - ../.env
+    network_mode: host
+    env_file: ../.env
     deploy:
       resources:
         limits:
           cpus: '0.1'
-          memory: 50m
+          memory: 50M
         reservations:
           memory: 15M

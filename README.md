@@ -33,7 +33,6 @@
 - [ ] Add code documentation
 - [ ] Unit tests
 - [ ] Docker image
-- [ ] Support of PostgreSQL
 
 ## Installation
 ### Docker
@@ -62,7 +61,13 @@ cd AsthoBin && cargo build --release
 Your executable will be in the `target/release/` folder, it is named `asthobin`.
 
 ## Configuration
-To configure this bot, just use the example configuration: [`example.env`](https://github.com/Asthowen/AsthoBin/blob/main/example.env), you just have to rename it to `.env` and complete it.
+To configure this bot, just use the example configuration: [`.env.example`](https://github.com/Asthowen/AsthoBin/blob/main/.env.example), you just have to rename it to `.env` and complete it.
+
+## Versioning
+**This project uses semantic versioning, which has the format: MAJOR.MINOR.PATCH with:**
+* `MAJOR` version when you make incompatible API changes.
+* `MINOR` version when you add functionality in a backwards compatible manner.
+* `PATCH` version when you make backwards compatible bug fixes.
 
 ## Contributors
 [<img width="45" src="https://avatars.githubusercontent.com/u/59535754?v=4" alt="Asthowen">](https://github.com/Asthowen)

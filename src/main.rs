@@ -1,34 +1,41 @@
-use actix_web::{web, App, HttpResponse, HttpServer};
-use asthobin::util::utils::exit_if_keys_not_exist;
-use asthobin::router::router_register::router;
-use asthobin::util::logger::init_logger;
-use asthobin::database::mysql;
-use asthobin::tasks::delete;
 use actix_cors::Cors;
+use actix_web::{web, App, HttpResponse, HttpServer};
+use asthobin::database::mysql;
+use asthobin::router::router_register::router;
+use asthobin::tasks::delete;
+use asthobin::util::logger::init_logger;
+use asthobin::util::utils::exit_if_keys_not_exist;
 use std::sync::Arc;
 
-
 fn main() {
-    actix_web::rt::System::with_tokio_rt(|| {
-        tokio::runtime::Builder::new_multi_thread()
-            .enable_all()
-            .worker_threads(8)
-            .thread_name("main-tokio")
-            .build()
-            .unwrap()
-    })
-        .block_on(async_main());
-}
-
-async fn async_main() {
     dotenv::dotenv().ok();
     init_logger();
 
     exit_if_keys_not_exist(&["DATABASE_URL", "BASE_URL"]);
 
-    let host: String = std::env::var("HOST").unwrap_or("127.0.0.1".to_owned());
-    let port: String = std::env::var("PORT").unwrap_or("8080".to_owned());
-    let cors_origin: String = std::env::var("CORS_ORIGIN").unwrap_or("".to_owned());
+    let worker_threads_number: usize = std::env::var("ACTIX_WORKER_THREADS_NUMBER")
+        .unwrap_or_else(|_| "8".to_owned())
+        .parse::<usize>()
+        .unwrap_or(8);
+
+    actix_web::rt::System::with_tokio_rt(|| {
+        tokio::runtime::Builder::new_multi_thread()
+            .enable_all()
+            .worker_threads(worker_threads_number)
+            .thread_name("main-tokio")
+            .build()
+            .unwrap()
+    })
+    .block_on(async_main());
+}
+
+async fn async_main() {
+    let host: String = std::env::var("HOST").unwrap_or_else(|_| "127.0.0.1".to_owned());
+    let port: String = std::env::var("PORT").unwrap_or_else(|_| "8080".to_owned());
+    let cors_origin: String = std::env::var("CORS_ORIGIN").unwrap_or_else(|_| "".to_owned());
+    if cors_origin.is_empty() {
+        log::warn!("The CORS_ORIGIN environment variable has not been defined, so CORS has been completely disabled (this does not prevent the server from working, but it is a security issue).");
+    }
     let pool: mysql::MysqlPool = mysql::get_pool();
 
     let pool_arc: Arc<mysql::MysqlPool> = Arc::new(pool.clone());
@@ -45,14 +52,11 @@ async fn async_main() {
 
     HttpServer::new(move || {
         let mut cors: Cors = Cors::default()
-            .allowed_methods(vec!["GET"])
+            .allowed_methods(vec!["GET", "POST"])
             .allow_any_header()
             .max_age(3600);
 
         if cors_origin.is_empty() || cors_origin == "*" {
-            if cors_origin.is_empty() {
-                log::warn!("The CORS_ORIGIN environment variable has not been defined, so CORS has been completely disabled (this does not prevent the server from working, but it is a security issue.");
-            }
             cors = cors.allow_any_origin();
         } else {
             cors = cors.allowed_origin(cors_origin.as_str());
@@ -64,10 +68,10 @@ async fn async_main() {
             .configure(router)
             .wrap(cors)
     })
-        .workers(8)
-        .bind(format!("{}:{}", host, port))
-        .unwrap_or_else(|_| panic!("Couldn't bind to port {}", port))
-        .run()
-        .await
-        .unwrap()
+    .workers(8)
+    .bind(format!("{}:{}", host, port))
+    .unwrap_or_else(|_| panic!("Couldn't bind to port {}", port))
+    .run()
+    .await
+    .unwrap()
 }

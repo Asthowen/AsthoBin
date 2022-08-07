@@ -4,4 +4,4 @@ CREATE TABLE `asthobin` (
     `time` bigint(20) NOT NULL,
     PRIMARY KEY (`id`),
     UNIQUE KEY `asthobin_id_uindex` (`id`)
-) DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+);

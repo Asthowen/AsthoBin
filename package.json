@@ -1,6 +1,6 @@
 {
   "name": "asthobin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "AsthoBin is a simple website to share pieces of code with a URL, written in Rust.",
   "license": "GNU General Public License v3.0",
   "scripts": {
@@ -24,12 +24,12 @@
   },
   "homepage": "https://github.com/Asthowen/AsthoBin#README.md",
   "devDependencies": {
-    "tailwindcss": "^3.0.24"
+    "tailwindcss": "^3.1.8"
   },
   "dependencies": {
-    "autoprefixer": "^10.4.4",
-    "cssnano": "^5.1.7",
-    "postcss": "^8.4.12",
-    "postcss-cli": "^9.1.0"
+    "autoprefixer": "^10.4.8",
+    "cssnano": "^5.1.12",
+    "postcss": "^8.4.16",
+    "postcss-cli": "^10.0.0"
   }
 }

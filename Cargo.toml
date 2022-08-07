@@ -1,6 +1,6 @@
 [package]
 name = "asthobin"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Asthowen<contact@asthowen.fr>"]
 edition = "2021"
 description = "AsthoBin is a simple website to share pieces of code with a URL, written in Rust."
@@ -15,8 +15,9 @@ strip = true
 lto = true
 
 [dependencies]
+tokio = { version = "1.17", default-features = false, features = ["rt-multi-thread"] }
 diesel = { version = "1.4", features = ["mysql", "r2d2"] }
-tokio = { version = "1.17", features = ["full"] }
+actix-governor = "0.3"
 html-escape = "0.2"
 actix-files = "0.6"
 actix-cors = "0.6"
