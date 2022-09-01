@@ -1,10 +1,11 @@
 # Build image
 # Necessary dependencies to build AsthoBin
-FROM rust:alpine as build
+FROM rust:latest as build
 
 LABEL version="0.0.2" maintainer="Asthowen<contact@asthowen.fr>"
 
-RUN apk add --no-cache --update openssl-dev perl alpine-sdk libffi-dev tzdata npm gcc musl-dev mariadb-connector-c-dev
+RUN apt update && apt install -y build-essential default-libmysqlclient-dev curl
+RUN curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && apt install -y nodejs
 
 WORKDIR "/asthobin"
 
@@ -13,11 +14,9 @@ RUN cargo build --release && npm i && npm run prod
 
 # Release image
 # Necessary dependencies to run AsthoBin
-FROM alpine:latest
+FROM debian:latest
 
-RUN apk add --no-cache --update tzdata
-ENV TZ = Europe/Paris
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && mkdir /asthobin
+RUN apt update && apt install -y default-libmysqlclient-dev
 
 WORKDIR "/asthobin"
 

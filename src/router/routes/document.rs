@@ -38,7 +38,9 @@ pub async fn document(
         .unwrap();
 
     if document.is_some() {
-        if get_key("LOG_ON_ACCESS") == "true" {
+        let log_on_access: String =
+            std::env::var("LOG_ON_ACCESS").unwrap_or_else(|_| "false".to_owned());
+        if log_on_access == "true" {
             let current_url: String = format!(
                 "{}://{}{}",
                 query.clone().connection_info().scheme(),
@@ -48,7 +50,7 @@ pub async fn document(
             let user_ip: String = query
                 .connection_info()
                 .realip_remote_addr()
-                .unwrap()
+                .unwrap_or("unknown")
                 .to_owned();
             log::info!(
                 "Access to the code present at: {} - IP: {}.",

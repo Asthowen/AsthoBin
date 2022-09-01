@@ -1,6 +1,5 @@
 use crate::database::models::AsthoBin;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::util::utils::get_key;
 use actix_web::{web, HttpRequest, HttpResponse, Result};
 use diesel::mysql::MysqlConnection;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
@@ -45,11 +44,12 @@ pub async fn new(
         .map_err(|err| log::error!("{:?}", err))
         .ok();
 
-    if get_key("LOG_ON_SAVE") == "true" {
+    let log_on_save: String = std::env::var("LOG_ON_SAVE").unwrap_or_else(|_| "false".to_owned());
+    if log_on_save == "true" {
         let user_ip: String = query
             .connection_info()
             .realip_remote_addr()
-            .unwrap()
+            .unwrap_or("unknown")
             .to_owned();
         log::info!("New code saved with ID: {} - IP: {}.", random_url, user_ip);
     }

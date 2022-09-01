@@ -62,18 +62,7 @@ docker run -d \
   --env-file .env \
   asthowen/asthobin:latest
 ```
-
-By default, the time zone is set to `Europe/Paris` you can change this by overwriting the `TZ` flag:
-```bash
-docker run -d \
-  --name=asthobin \
-  -e TZ="Europe/Paris" \
-  -p 8080:8080 \
-  -p 3306:3306 \
-  --restart unless-stopped \
-  --env-file .env \
-  asthowen/asthobin:latest
-```
+You can also use docker-compose with the [`docker/docker-compose.yml`](https://github.com/Asthowen/AsthoBin/blob/main/docker/docker-compose.yml) file.
 
 ### Manually
 Start by cloning the repo:

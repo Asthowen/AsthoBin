@@ -18,14 +18,14 @@ pub fn init_logger() {
 
             writeln!(
                 buf,
-                "{} {} {} {}",
-                style.value(format!("[{}]", record.level())),
-                style.value(format!("[{}]", record.target())),
+                "{}",
                 style.value(format!(
-                    "[{}]",
-                    chrono::Local::now().format("%d/%m/%Y - %H:%M:%S")
+                    "[{}] [{}] [{}] {}",
+                    record.level(),
+                    record.target(),
+                    chrono::Local::now().format("%d/%m/%Y - %H:%M:%S"),
+                    record.args()
                 )),
-                style.value(record.args())
             )
         })
         .init();
