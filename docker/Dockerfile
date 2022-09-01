@@ -1,11 +1,27 @@
-FROM rust:latest
+# Build image
+# Necessary dependencies to build AsthoBin
+FROM rust:alpine as build
 
-LABEL version="0.0.1" maintainer="Asthowen<contact@asthowen.fr>"
+LABEL version="0.0.2" maintainer="Asthowen<contact@asthowen.fr>"
 
-RUN apt update && apt install wget nodejs npm -y
+RUN apk add --no-cache --update openssl-dev perl alpine-sdk libffi-dev tzdata npm gcc musl-dev mariadb-connector-c-dev
+
 WORKDIR "/asthobin"
-COPY ./ /asthobin
 
-RUN wget "https://github.com/Asthowen/AsthoBin/releases/download/0.0.1/asthobin-0.0.1-x86_64-unknown-linux-musl" && chmod +x ./asthobin-0.0.1-x86_64-unknown-linux-musl && npm i && npm run prod
+COPY . .
+RUN cargo build --release && npm i && npm run prod
 
-ENTRYPOINT ./asthobin-0.0.1-x86_64-unknown-linux-musl
+# Release image
+# Necessary dependencies to run AsthoBin
+FROM alpine:latest
+
+RUN apk add --no-cache --update tzdata
+ENV TZ = Europe/Paris
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && mkdir /asthobin
+
+WORKDIR "/asthobin"
+
+COPY --from=build /asthobin/target/release/asthobin .
+COPY --from=build /asthobin/static ./static
+
+ENTRYPOINT "./asthobin"

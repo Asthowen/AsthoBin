@@ -5,6 +5,9 @@ on:
     types: [published]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   generate-linux-executables:
     name: Build & publish for ${{ matrix.name }}
@@ -24,19 +27,9 @@ jobs:
           toolchain: stable
           target: ${{ matrix.name }}
 
-      - name: Get asthobin version
+      - name: Get AsthoBin version
         id: asthobin_version
-        run: |
-          cargo install cargo-get
-          echo "::set-output name=APP_VERSION::$(cargo get version)"
-
-      - name: Get latest release
-        id: get_release
-        uses: leahlundqvist/get-release@v1.3.1
-        with:
-          tag_name: ${{ steps.asthobin_version.outputs.APP_VERSION }}
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+        run: echo "::set-output name=APP_VERSION::$(awk -F ' = ' '$1 ~ /version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml)"
 
       - name: Use GitHub cache
         uses: actions/cache@v2
@@ -51,11 +44,11 @@ jobs:
         run: cargo build --release --locked
 
       - name: Upload executable to releases
-        uses: actions/upload-release-asset@v1.0.2
+        uses: Asthowen/UploadReleaseAsset@main
         env:
           GITHUB_TOKEN: ${{ github.token }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          release_tag: ${{ steps.asthobin_version.outputs.APP_VERSION }}
           asset_path: ./target/release/asthobin
           asset_name: asthobin-${{ steps.asthobin_version.outputs.APP_VERSION }}-${{ matrix.name }}
           asset_content_type: application/octet-stream

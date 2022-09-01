@@ -32,36 +32,75 @@
 - [x] GitHub actions
 - [ ] Add code documentation
 - [ ] Unit tests
-- [ ] Docker image
+- [x] Docker image
 
 ## Installation
 ### Docker
 Start by cloning the repo:
 ```bash
-git clone https://github.com/Asthowen/AsthoBin.git
+git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
+```
+Then, start by edit `.env` config file for this, please refer to [configuration](#configuration).
+
+Install diesel-cli:
+```bash
+cargo install diesel_cli --no-default-features --features mysql
 ```
 
-Now switch to project folder and build the container with docker-compose:
+Deploy migrations:
 ```bash
-cd AsthoBin && docker-compose -f ./docker/docker-compose.yml up -d --build
+diesel migration run
+```
+
+And finally, run Docker container (**do not forget to change the two ports, one for AsthoBin and the other for your SQL database**):
+```bash
+docker run -d \
+  --name=asthobin \
+  -p 8080:8080 \
+  -p 3306:3306 \
+  --restart unless-stopped \
+  --env-file .env \
+  asthowen/asthobin:latest
+```
+
+By default, the time zone is set to `Europe/Paris` you can change this by overwriting the `TZ` flag:
+```bash
+docker run -d \
+  --name=asthobin \
+  -e TZ="Europe/Paris" \
+  -p 8080:8080 \
+  -p 3306:3306 \
+  --restart unless-stopped \
+  --env-file .env \
+  asthowen/asthobin:latest
 ```
 
 ### Manually
 Start by cloning the repo:
 ```bash
-git clone https://github.com/Asthowen/AsthoBin.git
+git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
 ```
-**For the next step you need to have Rust and cargo installed on your PC, for that follow the [official documentation](https://www.rust-lang.org/tools/install).**
+**For the next step you need to have Rust and Cargo installed on your PC, for that follow the [official documentation](https://www.rust-lang.org/tools/install).**
 
-Now switch to project folder and compile a release:
+Install diesel-cli:
 ```bash
-cd AsthoBin && cargo build --release
+cargo install diesel_cli --no-default-features --features mysql
+```
+
+Deploy migrations:
+```bash
+diesel migration run
+```
+
+Now compile a release:
+```bash
+cargo build --release
 ```
 
 Your executable will be in the `target/release/` folder, it is named `asthobin`.
 
 ## Configuration
-To configure this bot, just use the example configuration: [`.env.example`](https://github.com/Asthowen/AsthoBin/blob/main/.env.example), you just have to rename it to `.env` and complete it.
+To configure AsthoBin, just use the example configuration: [`.env.example`](https://github.com/Asthowen/AsthoBin/blob/main/.env.example), you just have to rename it to `.env` and complete it.
 
 ## Versioning
 **This project uses semantic versioning, which has the format: MAJOR.MINOR.PATCH with:**

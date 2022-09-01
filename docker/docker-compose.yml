@@ -1,12 +1,9 @@
 version: '3.8'
 
 services:
-  astho-bin:
-    build:
-      context: ../
-      dockerfile: ./docker/Dockerfile
-    image: astho-bin:latest.version
-    container_name: astho-bin
+  asthobin:
+    image: asthowen/asthobin:latest
+    container_name: asthobin
     restart: always
     network_mode: host
     env_file: ../.env
