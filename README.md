@@ -27,6 +27,7 @@
 * Responsive UI
 * Code coloring with [highlight.js](https://highlightjs.org/)
 * Automatic deletion after custom time
+* Recovery of files raws
 
 ## TODO
 - [x] GitHub actions
@@ -90,6 +91,22 @@ Your executable will be in the `target/release/` folder, it is named `asthobin`.
 
 ## Configuration
 To configure AsthoBin, just use the example configuration: [`.env.example`](https://github.com/Asthowen/AsthoBin/blob/main/.env.example), you just have to rename it to `.env` and complete it.
+
+### List of variables
+
+| Key                             | Default                | Description                                              |
+|:--------------------------------|:-----------------------|:---------------------------------------------------------|
+| **HOST**                        | 127.0.0.1              | The desired hostname to launch AsthoBin, e.g. `0.0.0.0`. |
+| **PORT**                        | 8080                   | The desired port to launch AsthoBin, e.g. `8080`.        |
+| **DATABASE_URL**                | **Nothing (required)** | The URL of your database.                                |
+| **BASE_URL**                    | **Nothing (required)** | The URL at which your AsthoBin instance is accessible.   |
+| **CORS_ORIGIN**                 | *                      | CORS parameters.                                         |
+| **LOG_ON_ACCESS**               | false                  | Allows to display a log when a user access to a file.    |
+| **LOG_ON_SAVE**                 | false                  | Allows to display a log when a user creates a file.      |
+| **RATELIMIT_BETWEEN_SAVE**      | 2                      | Number of seconds between each file save.                |
+| **RATELIMIT_ALLOWED_BEFORE**    | 4                      | Number of requests before blocking.                      |
+| **ACTIX_WORKER_THREADS_NUMBER** | 8                      | The number of threads used by Actix.                     |
+| **TZ**                          | System value           | The time zone of the logger, e.g: `Europe/Paris`.        |
 
 ## Versioning
 **This project uses semantic versioning, which has the format: MAJOR.MINOR.PATCH with:**

@@ -34,5 +34,6 @@ pub fn router(config: &mut web::ServiceConfig) {
                 .wrap(Governor::new(&governor_conf))
                 .route(web::post().to(new::new)),
         )
-        .service(web::resource("/{document_id}").route(web::get().to(document::document)));
+        .service(web::resource("/{document_id}").route(web::get().to(document::document)))
+        .service(web::resource("/raw/{raw_id}").route(web::get().to(document::document)));
 }
