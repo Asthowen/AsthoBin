@@ -1,11 +1,12 @@
+use crate::database::mysql::MysqlPooled;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use diesel::r2d2::{ConnectionManager, Pool};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub async fn delete(pool: &Pool<ConnectionManager<MysqlConnection>>) {
-    let conn: PooledConnection<ConnectionManager<MysqlConnection>> = match pool.get() {
+    let mut conn: MysqlPooled = match pool.get() {
         Ok(pool) => pool,
         Err(_) => return,
     };
@@ -23,7 +24,7 @@ pub async fn delete(pool: &Pool<ConnectionManager<MysqlConnection>>) {
 
     diesel::delete(asthobin_dsl::asthobin)
         .filter(asthobin_dsl::time.lt(i64::try_from(current_time - delete_time).unwrap()))
-        .execute(&conn)
+        .execute(&mut conn)
         .map_err(|err| log::error!("{:?}", err))
         .ok();
 }

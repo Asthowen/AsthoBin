@@ -15,19 +15,20 @@ strip = true
 lto = true
 
 [dependencies]
-tokio = { version = "1.17", default-features = false, features = ["rt-multi-thread"] }
-diesel = { version = "1.4", features = ["mysql", "r2d2"] }
-actix-governor = "0.3"
+tokio = { version = "1.21.2", default-features = false, features = ["rt-multi-thread"] }
+diesel = { version = "2.0.2", features = ["mysql", "r2d2"] }
+diesel_migrations = "2.0.0"
+actix-governor = "0.3.2"
+actix-files = "0.6.2"
+env_logger = "0.9.1"
+actix-cors = "0.6.3"
+actix-web = "4.2.1"
 html-escape = "0.2"
-actix-files = "0.6"
-actix-cors = "0.6"
-env_logger = "0.9"
+chrono = "0.4.22"
+serde = "1.0.145"
 askama = "0.11"
 dotenv = "0.15"
-actix-web = "4"
-chrono = "0.4"
+r2d2 = "0.8.10"
 actix = "0.13"
-serde = "1.0"
+log = "0.4.17"
 rand = "0.8"
-r2d2 = "0.8"
-log = "0.4"

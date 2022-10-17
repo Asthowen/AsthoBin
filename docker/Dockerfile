@@ -22,5 +22,6 @@ WORKDIR "/asthobin"
 
 COPY --from=build /asthobin/target/release/asthobin .
 COPY --from=build /asthobin/static ./static
+COPY --from=build /asthobin/migrations ./migrations
 
 ENTRYPOINT "./asthobin"

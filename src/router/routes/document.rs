@@ -1,4 +1,5 @@
 use crate::database::models::AsthoBin;
+use crate::database::mysql::MysqlPooled;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use crate::util::utils::get_key;
 use actix_web::http;
@@ -6,7 +7,7 @@ use actix_web::{web, HttpRequest, HttpResponse, Result};
 use askama::Template;
 use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use diesel::r2d2::{ConnectionManager, Pool};
 use diesel::RunQueryDsl;
 
 #[derive(Template)]
@@ -30,14 +31,14 @@ pub async fn document(
             )
         };
 
-    let conn: PooledConnection<ConnectionManager<MysqlConnection>> = match pool.get() {
+    let mut conn: MysqlPooled = match pool.get() {
         Ok(pool) => pool,
         Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
     };
 
     let document: Option<AsthoBin> = asthobin_dsl::asthobin
         .filter(asthobin_dsl::id.like(id.clone()))
-        .first::<AsthoBin>(&conn)
+        .first::<AsthoBin>(&mut conn)
         .optional()
         .map_err(|e| (http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
         .unwrap();

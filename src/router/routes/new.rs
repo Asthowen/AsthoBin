@@ -1,8 +1,9 @@
 use crate::database::models::AsthoBin;
+use crate::database::mysql::MysqlPooled;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use actix_web::{web, HttpRequest, HttpResponse, Result};
 use diesel::mysql::MysqlConnection;
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use diesel::r2d2::{ConnectionManager, Pool};
 use diesel::RunQueryDsl;
 use rand::distributions::Alphanumeric;
 use rand::distributions::DistString;
@@ -13,7 +14,7 @@ pub async fn new(
     bytes: web::Bytes,
     query: HttpRequest,
 ) -> Result<HttpResponse> {
-    let conn: PooledConnection<ConnectionManager<MysqlConnection>> = match pool.get() {
+    let mut conn: MysqlPooled = match pool.get() {
         Ok(pool) => pool,
         Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
     };
@@ -40,7 +41,7 @@ pub async fn new(
     };
     diesel::insert_into(asthobin_dsl::asthobin)
         .values(document)
-        .execute(&conn)
+        .execute(&mut conn)
         .map_err(|err| log::error!("{:?}", err))
         .ok();
 

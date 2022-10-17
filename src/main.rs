@@ -1,6 +1,7 @@
 use actix_cors::Cors;
 use actix_web::{web, App, HttpResponse, HttpServer};
 use asthobin::database::mysql;
+use asthobin::database::mysql::MysqlPooled;
 use asthobin::router::router_register::router;
 use asthobin::tasks::delete;
 use asthobin::util::logger::init_logger;
@@ -37,6 +38,11 @@ async fn async_main() {
         log::warn!("The CORS_ORIGIN environment variable has not been defined, so CORS has been completely disabled (this does not prevent the server from working, but it is a security issue).");
     }
     let pool: mysql::MysqlPool = mysql::get_pool();
+    let mut conn: MysqlPooled = match pool.get() {
+        Ok(pool) => pool,
+        Err(_) => std::process::exit(9),
+    };
+    mysql::run_migration(&mut conn);
 
     let pool_arc: Arc<mysql::MysqlPool> = Arc::new(pool.clone());
     tokio::task::spawn(async move {
@@ -70,7 +76,10 @@ async fn async_main() {
     })
     .workers(8)
     .bind(format!("{}:{}", host, port))
-    .unwrap_or_else(|_| panic!("Couldn't bind to port {}", port))
+    .unwrap_or_else(|_| {
+        log::error!("Couldn't bind AsthoBin to {}:{}", host, port);
+        std::process::exit(9);
+    })
     .run()
     .await
     .unwrap()
