@@ -1,6 +1,8 @@
 static/assets/css/tailwind/index.css
 pnpm-lock.yaml
 node_modules/
+cert.pem
 target/
+key.pem
 .idea/
 .env

@@ -66,7 +66,7 @@ pub async fn document(
         }
         if is_doc {
             let render: String = Code {
-                code: html_escape::encode_script(&document.content).to_string(),
+                code: document.content,
                 raw_url: format!("{}raw/{}", get_key("BASE_URL"), id),
             }
             .render()

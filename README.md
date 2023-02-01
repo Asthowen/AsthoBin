@@ -76,26 +76,45 @@ cargo build --release
 
 Your executable will be in the `target/release/` folder, it is named `asthobin`.
 
+Compile CSS (with pnpm):
+```bash
+pnpm run prod-pnpm
+```
+or with npm:
+```bash
+npm run prod
+```
+
 ## Configuration
-To configure AsthoBin, just use the example configuration: [`.env.example`](https://github.com/Asthowen/AsthoBin/blob/main/.env.example), you just have to rename it to `.env` and complete it.
+To configure **AsthoBin**, just use the example configuration: [`.env.example`](https://github.com/Asthowen/AsthoBin/blob/main/.env.example), you just have to rename it to `.env` and complete it.
 
 ### List of variables
 
-| Key                             | Default                | Description                                            |
-|:--------------------------------|:-----------------------|:-------------------------------------------------------|
-| **HOST**                        | 127.0.0.1              | The desired hostname to launch AsthoBin.               |
-| **PORT**                        | 8080                   | The desired port to launch AsthoBin.                   |
-| **DATABASE_URL**                | **Nothing (required)** | The URL of your database.                              |
-| **BASE_URL**                    | **Nothing (required)** | The URL at which your AsthoBin instance is accessible. |
-| **CORS_ORIGIN**                 | *                      | CORS parameters.                                       |
-| **LOG_ON_ACCESS**               | false                  | Allows to display a log when a user access to a file.  |
-| **LOG_ON_SAVE**                 | false                  | Allows to display a log when a user creates a file.    |
-| **RATELIMIT_BETWEEN_SAVE**      | 2                      | Number of seconds between each file save.              |
-| **RATELIMIT_ALLOWED_BEFORE**    | 4                      | Number of requests before blocking.                    |
-| **ACTIX_WORKER_THREADS_NUMBER** | 8                      | The number of threads used by Actix.                   |
-| **TZ**                          | System value           | The time zone of the logger, e.g: `Europe/Paris`.      |
+| Key                             | Default                | Description                                                         |
+|:--------------------------------|:-----------------------|:--------------------------------------------------------------------|
+| **HOST**                        | 127.0.0.1              | The desired hostname to launch AsthoBin.                            |
+| **PORT**                        | 8080                   | The desired port to launch AsthoBin.                                |
+| **DATABASE_URL**                | **Nothing (required)** | The URL of your database.                                           |
+| **BASE_URL**                    | **Nothing (required)** | The URL at which your AsthoBin instance is accessible.              |
+| **CORS_ORIGIN**                 | *                      | CORS parameters.                                                    |
+| **LOG_ON_ACCESS**               | false                  | Display a log when a user access to a file.                         |
+| **LOG_ON_SAVE**                 | false                  | Display a log when a user creates a file.                           |
+| **RATELIMIT_BETWEEN_SAVE**      | 2                      | Number of seconds between each file save.                           |
+| **RATELIMIT_ALLOWED_BEFORE**    | 4                      | Number of requests before blocking.                                 |
+| **ACTIX_WORKER_THREADS_NUMBER** | 8                      | The number of threads used by Actix.                                |
+| **TZ**                          | System value           | The time zone of the logger, e.g: `Europe/Paris`.                   |
+| **HTTP_PRIVATE_KEY**            | **Nothing (optional)** | The file path of SSL certificate private key.                       |
+| **HTTP_CERTIFICATE_CHAIN**      | **Nothing (optional)** | The file path of SSL certificate chain.                             |
+| **SSL_FILE_TYPE**               | PEM                    | The private key algorithm(PEM/ASN1).                                |
+| **SSL_CA_FILE**                 | **Nothing (optional)** | The file path of SSL certificate authority.                         |
+| **SSL_PROTOCOL_MIN_VERSION**    | **Nothing (optional)** | The minimum value of SSL protocol (ssl3/tls1/tls1.1/tls1.2/tls1.3). |
+| **SSL_PROTOCOL_MAX_VERSION**    | **Nothing (optional)** | The maximum value of SSL protocol (ssl3/tls1/tls1.1/tls1.2/tls1.3). |
 
-## Versioning
+## Development
+### Before submit a PR
+**You must make sure that clippy (`cargo clippy`) does not return any errors/warning. You must also run `cargo fmt`.**
+
+### Versioning
 **This project uses semantic versioning, which has the format: MAJOR.MINOR.PATCH with:**
 * `MAJOR` version when you make incompatible API changes.
 * `MINOR` version when you add functionality in a backwards compatible manner.
