@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "APP_VERSION=$(awk -F ' = ' '$1 ~ /version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml)" >> $GITHUB_OUTPUT
           sudo apt install -y build-essential default-libmysqlclient-dev curl
-          curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && sudo apt install -y nodejs && sudo npm install -g pnpm
+          curl -fsSL https://deb.nodesource.com/setup_current.x | sudo bash - && sudo apt install -y nodejs && sudo npm install -g pnpm
 
       - name: Use GitHub cache
         uses: actions/cache@v2
