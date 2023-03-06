@@ -36,6 +36,12 @@
 - [x] Docker image
 
 ## Installation
+### Release
+**You can directly download a release [here](https://github.com/Asthowen/AsthoBin/releases/latest).**
+
+After that, create a database with the name you want, then edit `.env` config file, for this please refer to [configuration](#configuration).
+
+
 ### Docker
 Start by cloning the repo:
 ```bash
@@ -43,7 +49,6 @@ git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
 ```
 
 After that, create a database with the name you want, then edit `.env` config file, for this please refer to [configuration](#configuration).
-
 
 And finally, run Docker container (**do not forget to change the two ports, one for AsthoBin and the other for your SQL database**):
 ```bash
@@ -62,7 +67,7 @@ Start by cloning the repo:
 ```bash
 git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
 ```
-**For the next step you need to have Rust and Cargo installed on your PC, for that follow the [official documentation](https://www.rust-lang.org/tools/install).**
+**For the next step you need to have Rust and Cargo installed on your PC, for that follow the [official documentation](https://www.rust-lang.org/tools/install). You will also need [pnpm](https://pnpm.io/).**
 
 Install diesel-cli:
 ```bash
@@ -75,15 +80,6 @@ cargo build --release
 ```
 
 Your executable will be in the `target/release/` folder, it is named `asthobin`.
-
-Compile CSS (with pnpm):
-```bash
-pnpm run prod-pnpm
-```
-or with npm:
-```bash
-npm run prod
-```
 
 ## Configuration
 To configure **AsthoBin**, just use the example configuration: [`.env.example`](https://github.com/Asthowen/AsthoBin/blob/main/.env.example), you just have to rename it to `.env` and complete it.

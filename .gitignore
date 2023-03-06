@@ -1,6 +1,7 @@
-static/assets/css/tailwind/index.css
+static/assets/css/index.css
 pnpm-lock.yaml
 node_modules/
+build-log.txt
 cert.pem
 target/
 key.pem

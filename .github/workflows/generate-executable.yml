@@ -11,25 +11,27 @@ permissions:
 jobs:
   generate-linux-executables:
     name: Build & publish for ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         name: [aarch64-unknown-linux-gnu, armv7-unknown-linux-gnueabihf, i686-unknown-linux-gnu, i686-unknown-linux-musl, mips-unknown-linux-gnu, mips64-unknown-linux-gnuabi64, mips64el-unknown-linux-gnuabi64, mipsel-unknown-linux-gnu, powerpc-unknown-linux-gnu, powerpc64-unknown-linux-gnu, powerpc64le-unknown-linux-gnu, arm-unknown-linux-gnueabi,x86_64-unknown-linux-gnu, x86_64-unknown-linux-musl]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install toolchain
-        uses: actions-rs/toolchain@v1
+        uses: dtolnay/rust-toolchain@stable
         with:
-          profile: minimal
           toolchain: stable
-          target: ${{ matrix.name }}
+          targets: ${{ matrix.name }}
 
       - name: Get AsthoBin version
         id: asthobin_version
-        run: echo "::set-output name=APP_VERSION::$(awk -F ' = ' '$1 ~ /version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml)"
+        run: |
+          echo "APP_VERSION=$(awk -F ' = ' '$1 ~ /version/ { gsub(/["]/, "", $2); printf("%s",$2) }' Cargo.toml)" >> $GITHUB_OUTPUT
+          sudo apt install -y build-essential default-libmysqlclient-dev curl
+          curl -fsSL https://deb.nodesource.com/setup_current.x | bash - && sudo apt install -y nodejs && sudo npm install -g pnpm
 
       - name: Use GitHub cache
         uses: actions/cache@v2
@@ -41,7 +43,7 @@ jobs:
           key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Build
-        run: cargo build --release --locked
+        run: cargo build --release --locked --target ${{ matrix.name }}
 
       - name: Upload executable to releases
         uses: Asthowen/UploadReleaseAsset@main
@@ -49,6 +51,6 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
         with:
           release_tag: ${{ steps.asthobin_version.outputs.APP_VERSION }}
-          asset_path: ./target/release/asthobin
+          asset_path: ./target/${{ matrix.name }}/release/asthobin
           asset_name: asthobin-${{ steps.asthobin_version.outputs.APP_VERSION }}-${{ matrix.name }}
           asset_content_type: application/octet-stream

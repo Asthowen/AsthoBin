@@ -1,12 +1,15 @@
 use crate::router::routes::*;
-use actix_files::{Files, NamedFile};
 use actix_governor::governor::middleware::NoOpMiddleware;
 use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyExtractor};
+use actix_web::web::Redirect;
 use actix_web::{get, web, Responder, Result};
+use actix_web_static_files::ResourceFiles;
+
+include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 #[get("/favicon.ico")]
 async fn favicon() -> Result<impl Responder> {
-    Ok(NamedFile::open("static/assets/pictures/favicon.ico")?)
+    Ok(Redirect::to("static/assets/pictures/favicon.ico"))
 }
 
 pub fn router(config: &mut web::ServiceConfig) {
@@ -26,10 +29,11 @@ pub fn router(config: &mut web::ServiceConfig) {
             )
             .finish()
             .unwrap();
+    let generated_static_ressources = generate();
 
     config
         .service(favicon)
-        .service(Files::new("/static", "static"))
+        .service(ResourceFiles::new("/static", generated_static_ressources))
         .service(web::resource("/").route(web::get().to(index::index)))
         .service(
             web::resource("/new")
