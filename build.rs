@@ -24,7 +24,11 @@ fn shell(command: &str) {
 
 fn main() -> std::io::Result<()> {
     #[cfg(not(debug_assertions))]
-    shell("mkdir static/assets/css && pnpm i && pnpm run prod");
+    shell("mkdir static/assets/css");
+    #[cfg(not(debug_assertions))]
+    shell("pnpm i");
+    #[cfg(not(debug_assertions))]
+    shell("pnpm run prod");
 
     resource_dir("./static").build()
 }

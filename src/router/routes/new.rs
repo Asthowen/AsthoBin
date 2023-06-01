@@ -19,8 +19,7 @@ pub async fn new(
         Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
     };
 
-    let document_content: String =
-        String::from_utf8(bytes.to_vec()).unwrap_or_else(|_| "".to_owned());
+    let document_content: String = String::from_utf8(bytes.to_vec()).unwrap_or_default();
     if document_content.trim().is_empty() {
         let data: &str = r#"{"status": "error","message": "This file is empty."}"#;
         return Ok(HttpResponse::Ok().content_type("text/json").body(data));

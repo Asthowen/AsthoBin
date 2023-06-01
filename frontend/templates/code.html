@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=12.0,minimum-scale=0.25,user-scalable=yes"/>
     <meta name="robots" content="noindex">
+    <meta name="darkreader-lock">
 
     <title>AsthoBin</title>
 
@@ -19,7 +20,7 @@
         <a href="{{ raw_url }}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6 hover:opacity-80">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
         </svg></a>
-        <a href="/static"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <a href="/"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
         </svg></a>
         <a href="https://github.com/Asthowen/AsthoBin" target="_blank">
@@ -29,7 +30,201 @@
     <pre class="hidden" id="codeAreaPre"><code class="w-screen h-screen p-8" id="codeArea" spellcheck="false">{{ code }}</code></pre>
     <script src="/static/assets/javascript/highlight.min.js"></script>
     <script>
-        hljs.highlightElement(document.getElementById('codeArea'));
+        const element = document.getElementById('codeArea');
+
+        hljs.highlightElement(element);
+        const classes = element.className.split(' ');
+        let detectedLanguage = null;
+        for (let i = 0; i < classes.length; i++) {
+            if (classes[i].startsWith('language-')) {
+                detectedLanguage = classes[i].substring(9);
+                break;
+            }
+        }
+        if (detectedLanguage === null) {
+            detectedLanguage = "txt";
+        }
+
+        const languageExtensions = {
+            '1c': 'bsl',
+            'abap': 'abap',
+            'accesslog': 'log',
+            'actionscript': 'as',
+            'ada': 'ada',
+            'arduino': 'ino',
+            'armasm': 's',
+            'asciidoc': 'adoc',
+            'aspectj': 'aj',
+            'autohotkey': 'ahk',
+            'autoit': 'au3',
+            'avrasm': 'asm',
+            'awk': 'awk',
+            'axapta': 'xpp',
+            'bash': 'sh',
+            'basic': 'bas',
+            'bnf': 'bnf',
+            'brainfuck': 'bf',
+            'c': 'c',
+            'cal': 'cal',
+            'capnproto': 'capnp',
+            'ceylon': 'ceylon',
+            'clean': 'icl',
+            'clojure': 'clj',
+            'clojure-repl': 'clj',
+            'cmake': 'cmake',
+            'coffeescript': 'coffee',
+            'coq': 'coq',
+            'cos': 'cls',
+            'cpp': 'cpp',
+            'crmsh': 'crmsh',
+            'crystal': 'cr',
+            'csharp': 'cs',
+            'csp': 'csp',
+            'css': 'css',
+            'd': 'd',
+            'dart': 'dart',
+            'delphi': 'pas',
+            'diff': 'diff',
+            'django': 'djt',
+            'dns': 'zone',
+            'dockerfile': 'dockerfile',
+            'dos': 'bat',
+            'dts': 'dts',
+            'dust': 'dst',
+            'ebnf': 'ebnf',
+            'elixir': 'ex',
+            'elm': 'elm',
+            'erb': 'erb',
+            'erlang': 'erl',
+            'erlang-repl': 'erl',
+            'excel': 'xlsx',
+            'fix': 'fix',
+            'flix': 'fx',
+            'fortran': 'f90',
+            'fsharp': 'fs',
+            'gams': 'gms',
+            'gauss': 'gss',
+            'gcode': 'gcode',
+            'gherkin': 'feature',
+            'glsl': 'glsl',
+            'gml': 'gml',
+            'go': 'go',
+            'golo': 'golo',
+            'gradle': 'gradle',
+            'groovy': 'groovy',
+            'haml': 'haml',
+            'handlebars': 'hbs',
+            'haskell': 'hs',
+            'haxe': 'hx',
+            'hsp': 'hsp',
+            'html': 'html',
+            'http': 'http',
+            'hy': 'hy',
+            'inform7': 'ni',
+            'ini': 'ini',
+            'irpf90': 'ir',
+            'java': 'java',
+            'javascript': 'js',
+            'jboss-cli': 'cli',
+            'json': 'json',
+            'julia': 'jl',
+            'julia-repl': 'jl',
+            'kotlin': 'kt',
+            'lasso': 'lasso',
+            'ldif': 'ldif',
+            'leaf': 'leaf',
+            'less': 'less',
+            'lisp': 'lisp',
+            'livecodeserver': 'lcs',
+            'livescript': 'ls',
+            'llvm': 'll',
+            'lsl': 'lsl',
+            'lua': 'lua',
+            'makefile': 'makefile',
+            'markdown': 'md',
+            'mathematica': 'nb',
+            'matlab': 'm',
+            'maxima': 'mac',
+            'mel': 'mel',
+            'mercury': 'm',
+            'mipsasm': 's',
+            'mizar': 'miz',
+            'mojolicious': 'pl',
+            'monkey': 'monkey',
+            'moonscript': 'moon',
+            'n1ql': 'n1ql',
+            'nginx': 'conf',
+            'nimrod': 'nim',
+            'nix': 'nix',
+            'nsis': 'nsi',
+            'objectivec': 'm',
+            'ocaml': 'ml',
+            'openscad': 'scad',
+            'oxygene': 'oxygene',
+            'parser3': 'g',
+            'perl': 'pl',
+            'pf': 'pf',
+            'php': 'php',
+            'plaintext': 'txt',
+            'pony': 'pony',
+            'powershell': 'ps1',
+            'processing': 'pde',
+            'profile': 'profile',
+            'prolog': 'pl',
+            'protobuf': 'proto',
+            'puppet': 'pp',
+            'purebasic': 'pb',
+            'python': 'py',
+            'q': 'q',
+            'qml': 'qml',
+            'r': 'r',
+            'reasonml': 're',
+            'rib': 'rib',
+            'roboconf': 'rbc',
+            'routeros': 'rsc',
+            'rsl': 'rsl',
+            'ruby': 'rb',
+            'ruleslanguage': 'rul',
+            'rust': 'rs',
+            'scala': 'scala',
+            'scheme': 'scm',
+            'scilab': 'sci',
+            'scss': 'scss',
+            'shell': 'sh',
+            'smali': 'smali',
+            'smalltalk': 'st',
+            'sml': 'sml',
+            'sqf': 'sqf',
+            'sql': 'sql',
+            'stan': 'stan',
+            'stata': 'do',
+            'step21': 'p21',
+            'stylus': 'styl',
+            'subunit': 'subunit',
+            'swift': 'swift',
+            'taggerscript': 'tag',
+            'tap': 'tap',
+            'tcl': 'tcl',
+            'tex': 'tex',
+            'thrift': 'thrift',
+            'tp': 'tp',
+            'twig': 'twig',
+            'typescript': 'ts',
+            'vala': 'vala',
+            'vbnet': 'vb',
+            'vbscript': 'vbs',
+            'vbscript-html': 'vbs',
+            'verilog': 'v',
+            'vhdl': 'vhd',
+            'vim': 'vim',
+            'x86asm': 'asm',
+            'xl': 'xl',
+            'xml': 'xml',
+            'xquery': 'xq',
+            'yaml': 'yaml',
+            'zephir': 'zep'
+        };
+
         setTimeout(() => document.getElementById('codeAreaPre').classList.remove('hidden'), 100);
         generateTxtFile = () => {
             let data = new Blob([document.getElementById('codeArea').textContent], {type: 'text/plain'});
@@ -37,7 +232,7 @@
             let a = document.createElement('a');
             a.style.display = 'none';
             a.href = objectURL;
-            a.download = window.location.pathname.split('/')[1] + '.txt';
+            a.download = window.location.pathname.split('/')[1] + "." + languageExtensions[detectedLanguage] ?? "txt";
             a.click();
             window.URL.revokeObjectURL(objectURL);
         }
