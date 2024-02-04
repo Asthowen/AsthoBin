@@ -1,7 +1,8 @@
 table! {
     asthobin (id) {
+        #[max_length = 10]
         id -> Varchar,
-        content -> Text,
+        content -> Longtext,
         time -> BigInt,
     }
 }

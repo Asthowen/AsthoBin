@@ -9,14 +9,14 @@ fn shell(command: &str) {
         .arg("-c")
         .arg(command)
         .output()
-        .expect(format!("Failed to run {cmd}", cmd = command).as_str());
+        .unwrap_or_else(|_| panic!("Failed to run {cmd}", cmd = command));
 
     let mut file: File = File::create("build-log.txt").expect("Couldn't create file...");
-    file.write(b"build log\n\n\n\nSTDOUT:\n")
+    file.write_all(b"build log\n\n\n\nSTDOUT:\n")
         .expect("Couldn't write to build log");
     file.write_all(&output.stdout)
         .expect("Couldn't write to build log");
-    file.write(b"\n\n\n\nSTDERR:\n")
+    file.write_all(b"\n\n\n\nSTDERR:\n")
         .expect("Couldn't write to build log");
     file.write_all(&output.stderr)
         .expect("Couldn't write to build log");

@@ -2,11 +2,11 @@ use actix_cors::Cors;
 use actix_web::{web, App, HttpResponse, HttpServer};
 use asthobin::database::mysql;
 use asthobin::database::mysql::MysqlPooled;
-use asthobin::router::router_register::router;
+use asthobin::routes::setup_routes;
 use asthobin::tasks::delete;
 use asthobin::util::logger::init_logger;
-use asthobin::util::utils::exit_if_keys_not_exist;
-use openssl::ssl::{SslAcceptor, SslAcceptorBuilder, SslFiletype, SslMethod, SslVersion};
+use asthobin::util::utils::{exit_if_keys_not_exist, map_to_ssl_version, WAIT_ONE_HOUR};
+use openssl::ssl::{SslAcceptor, SslAcceptorBuilder, SslFiletype, SslMethod};
 use std::path::Path;
 use std::sync::Arc;
 
@@ -56,7 +56,7 @@ async fn async_main() {
 
         loop {
             delete::delete(pool_arc).await;
-            tokio::time::sleep(std::time::Duration::from_secs(3600)).await;
+            tokio::time::sleep(WAIT_ONE_HOUR).await;
         }
     });
 
@@ -77,7 +77,7 @@ async fn async_main() {
         App::new()
             .app_data(web::Data::new(pool.clone()))
             .default_service(web::to(HttpResponse::Ok))
-            .configure(router)
+            .configure(setup_routes)
             .wrap(cors)
     })
     .workers(worker_threads_number);
@@ -106,24 +106,10 @@ async fn async_main() {
             builder.set_ca_file(&ssl_ca_file).ok();
         }
         builder
-            .set_min_proto_version(match ssl_protocol_min_version.to_lowercase().as_str() {
-                "ssl3" => Option::from(SslVersion::SSL3),
-                "tls1" => Option::from(SslVersion::TLS1),
-                "tls1.1" => Option::from(SslVersion::TLS1_1),
-                "tls1.2" => Option::from(SslVersion::TLS1_2),
-                "tls1.3" => Option::from(SslVersion::TLS1_3),
-                &_ => None,
-            })
+            .set_min_proto_version(map_to_ssl_version(ssl_protocol_min_version.to_lowercase()))
             .ok();
         builder
-            .set_max_proto_version(match ssl_protocol_max_version.to_lowercase().as_str() {
-                "ssl3" => Option::from(SslVersion::SSL3),
-                "tls1" => Option::from(SslVersion::TLS1),
-                "tls1.1" => Option::from(SslVersion::TLS1_1),
-                "tls1.2" => Option::from(SslVersion::TLS1_2),
-                "tls1.3" => Option::from(SslVersion::TLS1_3),
-                &_ => None,
-            })
+            .set_max_proto_version(map_to_ssl_version(ssl_protocol_max_version.to_lowercase()))
             .ok();
 
         builder

@@ -1,18 +1,21 @@
-use crate::router::routes::*;
 use actix_governor::governor::middleware::NoOpMiddleware;
 use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyExtractor};
 use actix_web::web::Redirect;
-use actix_web::{get, web, Responder, Result};
+use actix_web::{get, web, Responder};
 use actix_web_static_files::ResourceFiles;
+
+pub mod document;
+pub mod index;
+pub mod new;
 
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
 
 #[get("/favicon.ico")]
-async fn favicon() -> Result<impl Responder> {
+async fn favicon() -> actix_web::Result<impl Responder> {
     Ok(Redirect::to("static/assets/pictures/favicon.ico"))
 }
 
-pub fn router(config: &mut web::ServiceConfig) {
+pub fn setup_routes(config: &mut web::ServiceConfig) {
     let governor_conf: GovernorConfig<PeerIpKeyExtractor, NoOpMiddleware> =
         GovernorConfigBuilder::default()
             .per_second(

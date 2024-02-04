@@ -5,6 +5,6 @@
 extern crate diesel;
 
 pub mod database;
-pub mod router;
+pub mod routes;
 pub mod tasks;
 pub mod util;
