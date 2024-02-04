@@ -4,6 +4,14 @@ use std::time::Duration;
 pub const WAIT_TWO_SECONDS: Duration = Duration::from_secs(2);
 pub const WAIT_ONE_HOUR: Duration = Duration::from_secs(3600);
 
+pub const IGNORED_DOCUMENTS: [&str; 5] = [
+    "robots.txt",
+    "sitemap.xml",
+    "security.txt",
+    ".well-known/robots.txt",
+    ".htaccess",
+];
+
 pub fn exit_if_key_not_exist(key: &str) {
     if std::env::var(key).is_err() {
         log::error!("The key {} does not exist in the .env file.", key);

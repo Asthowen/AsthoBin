@@ -2,240 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=12.0,minimum-scale=0.25,user-scalable=yes"/>
+    <meta name="viewport" content="width=device-width,initial-scale=0.5,maximum-scale=12.0,minimum-scale=0.25,user-scalable=yes">
     <meta name="robots" content="noindex">
-    <meta name="darkreader-lock">
+    <meta name="darkreader-lock" content="yes">
 
     <title>AsthoBin</title>
 
     <link rel="icon" type="image/png" href="/static/assets/pictures/favicon.ico">
     <link rel="stylesheet" href="/static/assets/css/index.css">
-    <link href="/static/assets/fonts/CascadiaCode.ttf">
 </head>
 <body class="w-screen h-screen bg-dark-2 overflow-hidden">
     <div class="top-0 right-0 fixed flex justify-center items-center text-white mt-6 mr-6 p-2 space-x-4 cursor-pointer bg-dark-1 rounded">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" onclick="generateTxtFile();">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" onclick="generateTxtFile();">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
         </svg>
-        <a href="{{ raw_url }}"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="h-6 w-6 hover:opacity-80">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-        </svg></a>
-        <a href="/"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg></a>
-        <a href="https://github.com/Asthowen/AsthoBin" target="_blank">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 hover:opacity-80 fill-white"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"></path></svg>
+        <a href="{{ raw_url }}" aria-label="Access the raw file">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="size-6 hover:opacity-80">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+        </a>
+        <a href="/" aria-label="Create a new bin">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+        </a>
+        <a href="https://github.com/Asthowen/AsthoBin" target="_blank" aria-label="Access the GitHub repository">
+            <svg xmlns="http://www.w3.org/2000/svg" class="size-6 hover:opacity-80 fill-white"><path fill-rule="evenodd" clip-rule="evenodd" d="M12.026 2c-5.509 0-9.974 4.465-9.974 9.974 0 4.406 2.857 8.145 6.821 9.465.499.09.679-.217.679-.481 0-.237-.008-.865-.011-1.696-2.775.602-3.361-1.338-3.361-1.338-.452-1.152-1.107-1.459-1.107-1.459-.905-.619.069-.605.069-.605 1.002.07 1.527 1.028 1.527 1.028.89 1.524 2.336 1.084 2.902.829.091-.645.351-1.085.635-1.334-2.214-.251-4.542-1.107-4.542-4.93 0-1.087.389-1.979 1.024-2.675-.101-.253-.446-1.268.099-2.64 0 0 .837-.269 2.742 1.021a9.582 9.582 0 0 1 2.496-.336 9.554 9.554 0 0 1 2.496.336c1.906-1.291 2.742-1.021 2.742-1.021.545 1.372.203 2.387.099 2.64.64.696 1.024 1.587 1.024 2.675 0 3.833-2.33 4.675-4.552 4.922.355.308.675.916.675 1.846 0 1.334-.012 2.41-.012 2.737 0 .267.178.577.687.479C19.146 20.115 22 16.379 22 11.974 22 6.465 17.535 2 12.026 2z"></path></svg>
         </a>
     </div>
     <pre class="hidden" id="codeAreaPre"><code class="w-screen h-screen p-8" id="codeArea" spellcheck="false">{{ code }}</code></pre>
     <script src="/static/assets/javascript/highlight.min.js"></script>
-    <script>
-        const element = document.getElementById('codeArea');
-
-        hljs.highlightElement(element);
-        const classes = element.className.split(' ');
-        let detectedLanguage = null;
-        for (let i = 0; i < classes.length; i++) {
-            if (classes[i].startsWith('language-')) {
-                detectedLanguage = classes[i].substring(9);
-                break;
-            }
-        }
-        if (detectedLanguage === null) {
-            detectedLanguage = "txt";
-        }
-
-        const languageExtensions = {
-            '1c': 'bsl',
-            'abap': 'abap',
-            'accesslog': 'log',
-            'actionscript': 'as',
-            'ada': 'ada',
-            'arduino': 'ino',
-            'armasm': 's',
-            'asciidoc': 'adoc',
-            'aspectj': 'aj',
-            'autohotkey': 'ahk',
-            'autoit': 'au3',
-            'avrasm': 'asm',
-            'awk': 'awk',
-            'axapta': 'xpp',
-            'bash': 'sh',
-            'basic': 'bas',
-            'bnf': 'bnf',
-            'brainfuck': 'bf',
-            'c': 'c',
-            'cal': 'cal',
-            'capnproto': 'capnp',
-            'ceylon': 'ceylon',
-            'clean': 'icl',
-            'clojure': 'clj',
-            'clojure-repl': 'clj',
-            'cmake': 'cmake',
-            'coffeescript': 'coffee',
-            'coq': 'coq',
-            'cos': 'cls',
-            'cpp': 'cpp',
-            'crmsh': 'crmsh',
-            'crystal': 'cr',
-            'csharp': 'cs',
-            'csp': 'csp',
-            'css': 'css',
-            'd': 'd',
-            'dart': 'dart',
-            'delphi': 'pas',
-            'diff': 'diff',
-            'django': 'djt',
-            'dns': 'zone',
-            'dockerfile': 'dockerfile',
-            'dos': 'bat',
-            'dts': 'dts',
-            'dust': 'dst',
-            'ebnf': 'ebnf',
-            'elixir': 'ex',
-            'elm': 'elm',
-            'erb': 'erb',
-            'erlang': 'erl',
-            'erlang-repl': 'erl',
-            'excel': 'xlsx',
-            'fix': 'fix',
-            'flix': 'fx',
-            'fortran': 'f90',
-            'fsharp': 'fs',
-            'gams': 'gms',
-            'gauss': 'gss',
-            'gcode': 'gcode',
-            'gherkin': 'feature',
-            'glsl': 'glsl',
-            'gml': 'gml',
-            'go': 'go',
-            'golo': 'golo',
-            'gradle': 'gradle',
-            'groovy': 'groovy',
-            'haml': 'haml',
-            'handlebars': 'hbs',
-            'haskell': 'hs',
-            'haxe': 'hx',
-            'hsp': 'hsp',
-            'html': 'html',
-            'http': 'http',
-            'hy': 'hy',
-            'inform7': 'ni',
-            'ini': 'ini',
-            'irpf90': 'ir',
-            'java': 'java',
-            'javascript': 'js',
-            'jboss-cli': 'cli',
-            'json': 'json',
-            'julia': 'jl',
-            'julia-repl': 'jl',
-            'kotlin': 'kt',
-            'lasso': 'lasso',
-            'ldif': 'ldif',
-            'leaf': 'leaf',
-            'less': 'less',
-            'lisp': 'lisp',
-            'livecodeserver': 'lcs',
-            'livescript': 'ls',
-            'llvm': 'll',
-            'lsl': 'lsl',
-            'lua': 'lua',
-            'makefile': 'makefile',
-            'markdown': 'md',
-            'mathematica': 'nb',
-            'matlab': 'm',
-            'maxima': 'mac',
-            'mel': 'mel',
-            'mercury': 'm',
-            'mipsasm': 's',
-            'mizar': 'miz',
-            'mojolicious': 'pl',
-            'monkey': 'monkey',
-            'moonscript': 'moon',
-            'n1ql': 'n1ql',
-            'nginx': 'conf',
-            'nimrod': 'nim',
-            'nix': 'nix',
-            'nsis': 'nsi',
-            'objectivec': 'm',
-            'ocaml': 'ml',
-            'openscad': 'scad',
-            'oxygene': 'oxygene',
-            'parser3': 'g',
-            'perl': 'pl',
-            'pf': 'pf',
-            'php': 'php',
-            'plaintext': 'txt',
-            'pony': 'pony',
-            'powershell': 'ps1',
-            'processing': 'pde',
-            'profile': 'profile',
-            'prolog': 'pl',
-            'protobuf': 'proto',
-            'puppet': 'pp',
-            'purebasic': 'pb',
-            'python': 'py',
-            'q': 'q',
-            'qml': 'qml',
-            'r': 'r',
-            'reasonml': 're',
-            'rib': 'rib',
-            'roboconf': 'rbc',
-            'routeros': 'rsc',
-            'rsl': 'rsl',
-            'ruby': 'rb',
-            'ruleslanguage': 'rul',
-            'rust': 'rs',
-            'scala': 'scala',
-            'scheme': 'scm',
-            'scilab': 'sci',
-            'scss': 'scss',
-            'shell': 'sh',
-            'smali': 'smali',
-            'smalltalk': 'st',
-            'sml': 'sml',
-            'sqf': 'sqf',
-            'sql': 'sql',
-            'stan': 'stan',
-            'stata': 'do',
-            'step21': 'p21',
-            'stylus': 'styl',
-            'subunit': 'subunit',
-            'swift': 'swift',
-            'taggerscript': 'tag',
-            'tap': 'tap',
-            'tcl': 'tcl',
-            'tex': 'tex',
-            'thrift': 'thrift',
-            'tp': 'tp',
-            'twig': 'twig',
-            'typescript': 'ts',
-            'vala': 'vala',
-            'vbnet': 'vb',
-            'vbscript': 'vbs',
-            'vbscript-html': 'vbs',
-            'verilog': 'v',
-            'vhdl': 'vhd',
-            'vim': 'vim',
-            'x86asm': 'asm',
-            'xl': 'xl',
-            'xml': 'xml',
-            'xquery': 'xq',
-            'yaml': 'yaml',
-            'zephir': 'zep'
-        };
-
-        setTimeout(() => document.getElementById('codeAreaPre').classList.remove('hidden'), 100);
-        generateTxtFile = () => {
-            let data = new Blob([document.getElementById('codeArea').textContent], {type: 'text/plain'});
-            const objectURL = window.URL.createObjectURL(data);
-            let a = document.createElement('a');
-            a.style.display = 'none';
-            a.href = objectURL;
-            a.download = window.location.pathname.split('/')[1] + "." + languageExtensions[detectedLanguage] ?? "txt";
-            a.click();
-            window.URL.revokeObjectURL(objectURL);
-        }
-    </script>
+    <script src="/static/assets/javascript/code.js"></script>
 </body>
 </html>

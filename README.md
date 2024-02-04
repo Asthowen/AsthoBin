@@ -36,12 +36,6 @@
 - [x] Docker image
 
 ## Installation
-### Release
-**You can directly download a release [here](https://github.com/Asthowen/AsthoBin/releases/latest).**
-
-After that, create a database with the name you want, then edit `.env` config file, for this please refer to [configuration](#configuration).
-
-
 ### Docker
 Start by cloning the repo:
 ```bash
@@ -86,25 +80,25 @@ To configure **AsthoBin**, just use the example configuration: [`.env.example`](
 
 ### List of variables
 
-| Key                             | Default                | Description                                                         |
-|:--------------------------------|:-----------------------|:--------------------------------------------------------------------|
-| **HOST**                        | 127.0.0.1              | The desired hostname to launch AsthoBin.                            |
-| **PORT**                        | 8080                   | The desired port to launch AsthoBin.                                |
-| **DATABASE_URL**                | **Nothing (required)** | The URL of your database.                                           |
-| **BASE_URL**                    | **Nothing (required)** | The URL at which your AsthoBin instance is accessible.              |
-| **CORS_ORIGIN**                 | *                      | CORS parameters.                                                    |
-| **LOG_ON_ACCESS**               | false                  | Display a log when a user access to a file.                         |
-| **LOG_ON_SAVE**                 | false                  | Display a log when a user creates a file.                           |
-| **RATELIMIT_BETWEEN_SAVE**      | 2                      | Number of seconds between each file save.                           |
-| **RATELIMIT_ALLOWED_BEFORE**    | 4                      | Number of requests before blocking.                                 |
-| **ACTIX_WORKER_THREADS_NUMBER** | 8                      | The number of threads used by Actix.                                |
-| **TZ**                          | System value           | The time zone of the logger, e.g: `Europe/Paris`.                   |
-| **HTTP_PRIVATE_KEY**            | **Nothing (optional)** | The file path of SSL certificate private key.                       |
-| **HTTP_CERTIFICATE_CHAIN**      | **Nothing (optional)** | The file path of SSL certificate chain.                             |
-| **SSL_FILE_TYPE**               | PEM                    | The private key algorithm(PEM/ASN1).                                |
-| **SSL_CA_FILE**                 | **Nothing (optional)** | The file path of SSL certificate authority.                         |
-| **SSL_PROTOCOL_MIN_VERSION**    | **Nothing (optional)** | The minimum value of SSL protocol (ssl3/tls1/tls1.1/tls1.2/tls1.3). |
-| **SSL_PROTOCOL_MAX_VERSION**    | **Nothing (optional)** | The maximum value of SSL protocol (ssl3/tls1/tls1.1/tls1.2/tls1.3). |
+| Key                             | Default                | Description                                                                           |
+|:--------------------------------|:-----------------------|:--------------------------------------------------------------------------------------|
+| **HOST**                        | 127.0.0.1              | The desired hostname to launch AsthoBin.                                              |
+| **PORT**                        | 8080                   | The desired port to launch AsthoBin.                                                  |
+| **DATABASE_URL**                | **Nothing (required)** | The URL of your database.                                                             |
+| **BASE_URL**                    | **Nothing (required)** | The URL at which your AsthoBin instance is accessible, e.g: `http://127.0.0.1:8080/`. |
+| **CORS_ORIGIN**                 | *                      | CORS parameters.                                                                      |
+| **LOG_ON_ACCESS**               | false                  | Display a log when a user access to a file.                                           |
+| **LOG_ON_SAVE**                 | false                  | Display a log when a user creates a file.                                             |
+| **RATELIMIT_BETWEEN_SAVE**      | 2                      | Number of seconds between each file save.                                             |
+| **RATELIMIT_ALLOWED_BEFORE**    | 4                      | Number of requests before blocking.                                                   |
+| **ACTIX_WORKER_THREADS_NUMBER** | 8                      | The number of threads used by Actix.                                                  |
+| **TZ**                          | System value           | The time zone of the logger, e.g: `Europe/Paris`.                                     |
+| **HTTP_PRIVATE_KEY**            | **Nothing (optional)** | The file path of SSL certificate private key.                                         |
+| **HTTP_CERTIFICATE_CHAIN**      | **Nothing (optional)** | The file path of SSL certificate chain.                                               |
+| **SSL_FILE_TYPE**               | PEM                    | The private key algorithm(PEM/ASN1).                                                  |
+| **SSL_CA_FILE**                 | **Nothing (optional)** | The file path of SSL certificate authority.                                           |
+| **SSL_PROTOCOL_MIN_VERSION**    | **Nothing (optional)** | The minimum value of SSL protocol (ssl3/tls1/tls1.1/tls1.2/tls1.3).                   |
+| **SSL_PROTOCOL_MAX_VERSION**    | **Nothing (optional)** | The maximum value of SSL protocol (ssl3/tls1/tls1.1/tls1.2/tls1.3).                   |
 
 ## Development
 ### Before submit a PR

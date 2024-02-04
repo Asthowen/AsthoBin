@@ -1,7 +1,7 @@
 use crate::database::models::AsthoBin;
 use crate::database::mysql::MysqlPooled;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::util::utils::get_key;
+use crate::util::utils::{get_key, IGNORED_DOCUMENTS};
 use actix_web::http;
 use actix_web::{web, HttpRequest, HttpResponse, Result};
 use askama::Template;
@@ -30,6 +30,10 @@ pub async fn document(
                 query.match_info().get("raw_id").unwrap().parse().unwrap(),
             )
         };
+
+    if IGNORED_DOCUMENTS.contains(&id.as_str()) {
+        return Ok(HttpResponse::NotFound().finish());
+    }
 
     let mut conn: MysqlPooled = match pool.get() {
         Ok(pool) => pool,
