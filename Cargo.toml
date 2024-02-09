@@ -1,6 +1,6 @@
 [package]
 name = "asthobin"
-version = "0.0.6"
+version = "0.0.7"
 authors = ["Asthowen<contact@asthowen.fr>"]
 edition = "2021"
 description = "AsthoBin is a simple website to share pieces of code with a URL, written in Rust."
@@ -18,20 +18,22 @@ lto = true
 static-files = "0.2.3"
 
 [dependencies]
+diesel-async = { version = "0.4.1", features = ["mysql", "bb8", "async-connection-wrapper"] }
 tokio = { version = "1.36.0", default-features = false, features = ["rt-multi-thread"] }
 openssl = { version = "0.10.63", features = ["vendored", "v110"] }
-diesel = { version = "2.1.4", features = ["mysql", "r2d2"] }
 actix-web = { version = "4.5.1", features = ["openssl"] }
 actix-web-static-files = "4.0.1"
 diesel_migrations = "2.1.0"
 actix-governor = "0.5.0"
 static-files = "0.2.3"
+serde_json = "1.0.112"
 env_logger = "0.10.0"
 actix-cors = "0.7.0"
+dotenvy = "0.15.7"
 chrono = "0.4.33"
 serde = "1.0.196"
 askama = "0.12.1"
-dotenv = "0.15.0"
-r2d2 = "0.8.10"
+diesel = "2.1.4"
 log = "0.4.20"
 rand = "0.8.5"
+bb8 = "0.8.3"

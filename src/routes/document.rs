@@ -1,14 +1,14 @@
+use crate::api_error::ApiError;
 use crate::database::models::AsthoBin;
-use crate::database::mysql::MysqlPooled;
+use crate::database::mysql::{MysqlPool, MysqlPooled};
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use crate::util::utils::{get_key, IGNORED_DOCUMENTS};
-use actix_web::http;
-use actix_web::{web, HttpRequest, HttpResponse, Result};
+use actix_web::dev::ConnectionInfo;
+use actix_web::{web, HttpRequest, HttpResponse};
 use askama::Template;
-use diesel::mysql::MysqlConnection;
 use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool};
-use diesel::RunQueryDsl;
+use diesel_async::RunQueryDsl;
+use std::cell::Ref;
 
 #[derive(Template)]
 #[template(path = "code.html")]
@@ -18,43 +18,37 @@ struct Code {
 }
 
 pub async fn document(
-    pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>,
+    pool: web::Data<MysqlPool>,
     query: HttpRequest,
-) -> Result<HttpResponse> {
+) -> Result<HttpResponse, ApiError> {
     let (is_doc, id): (bool, String) =
         if let Some(document_id) = query.match_info().get("document_id") {
-            (true, document_id.parse().unwrap())
+            (true, document_id.parse()?)
         } else {
-            (
-                false,
-                query.match_info().get("raw_id").unwrap().parse().unwrap(),
-            )
+            (false, query.match_info().get("raw_id").unwrap().parse()?)
         };
 
     if IGNORED_DOCUMENTS.contains(&id.as_str()) {
         return Ok(HttpResponse::NotFound().finish());
     }
 
-    let mut conn: MysqlPooled = match pool.get() {
-        Ok(pool) => pool,
-        Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
-    };
+    let mut conn: MysqlPooled = pool.get().await?;
 
     let document: Option<AsthoBin> = asthobin_dsl::asthobin
-        .filter(asthobin_dsl::id.like(id.clone()))
+        .filter(asthobin_dsl::id.like(&id))
         .first::<AsthoBin>(&mut conn)
-        .optional()
-        .map_err(|e| (http::StatusCode::INTERNAL_SERVER_ERROR, e.to_string()))
-        .unwrap();
+        .await
+        .optional()?;
 
     if let Some(document) = document {
         let log_on_access: String =
             std::env::var("LOG_ON_ACCESS").unwrap_or_else(|_| "false".to_owned());
         if log_on_access == "true" {
+            let connection_info: Ref<ConnectionInfo> = query.connection_info();
             let current_url: String = format!(
                 "{}://{}{}",
-                query.clone().connection_info().scheme(),
-                query.clone().connection_info().host(),
+                connection_info.scheme(),
+                connection_info.host(),
                 query.path()
             );
             let user_ip: String = query
@@ -73,8 +67,7 @@ pub async fn document(
                 code: document.content,
                 raw_url: format!("{}raw/{}", get_key("BASE_URL"), id),
             }
-            .render()
-            .unwrap();
+            .render()?;
             Ok(HttpResponse::Ok().content_type("text/html").body(render))
         } else {
             Ok(HttpResponse::Ok()

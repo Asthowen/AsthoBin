@@ -1,48 +1,43 @@
+use crate::api_error::ApiError;
 use crate::database::models::AsthoBin;
-use crate::database::mysql::MysqlPooled;
+use crate::database::mysql::{MysqlPool, MysqlPooled};
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use actix_web::{web, HttpRequest, HttpResponse, Result};
-use diesel::mysql::MysqlConnection;
-use diesel::r2d2::{ConnectionManager, Pool};
-use diesel::RunQueryDsl;
+use actix_web::http::StatusCode;
+use actix_web::{web, HttpRequest, HttpResponse};
+use diesel_async::RunQueryDsl;
 use rand::distributions::Alphanumeric;
 use rand::distributions::DistString;
+use serde_json::json;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 pub async fn new(
-    pool: web::Data<Pool<ConnectionManager<MysqlConnection>>>,
+    pool: web::Data<MysqlPool>,
     bytes: web::Bytes,
     query: HttpRequest,
-) -> Result<HttpResponse> {
-    let mut conn: MysqlPooled = match pool.get() {
-        Ok(pool) => pool,
-        Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
-    };
+) -> Result<HttpResponse, ApiError> {
+    let mut conn: MysqlPooled = pool.get().await?;
 
-    let document_content: String = String::from_utf8(bytes.to_vec()).unwrap_or_default();
+    let document_content: String = String::from_utf8(bytes.to_vec())?;
     if document_content.trim().is_empty() {
-        let data: &str = r#"{"status": "error","message": "This file is empty."}"#;
-        return Ok(HttpResponse::Ok().content_type("text/json").body(data));
+        return Err(ApiError::new_message(
+            StatusCode::BAD_REQUEST,
+            "This file is empty.",
+        ));
     }
 
     let random_url: String = Alphanumeric.sample_string(&mut rand::thread_rng(), 10);
 
-    let current_time: u64 = match SystemTime::now().duration_since(UNIX_EPOCH) {
-        Ok(value) => value,
-        Err(_) => return Ok(HttpResponse::InternalServerError().finish()),
-    }
-    .as_secs();
+    let current_time: u64 = SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs();
 
     let document: AsthoBin = AsthoBin {
-        id: random_url.clone(),
+        id: random_url,
         content: document_content,
-        time: i64::try_from(current_time).unwrap(),
+        time: i64::try_from(current_time)?,
     };
     diesel::insert_into(asthobin_dsl::asthobin)
-        .values(document)
+        .values(&document)
         .execute(&mut conn)
-        .map_err(|err| log::error!("{:?}", err))
-        .ok();
+        .await?;
 
     let log_on_save: String = std::env::var("LOG_ON_SAVE").unwrap_or_else(|_| "false".to_owned());
     if log_on_save == "true" {
@@ -51,12 +46,10 @@ pub async fn new(
             .realip_remote_addr()
             .unwrap_or("unknown")
             .to_owned();
-        log::info!("New code saved with ID: {} - IP: {}.", random_url, user_ip);
+        log::info!("New code saved with ID: {} - IP: {}.", document.id, user_ip);
     }
 
-    let data: String = r#"{"status": "success", "key": ""#.to_owned() + &random_url + r#""}"#;
     Ok(HttpResponse::Ok()
-        .append_header(("Location", format!("/{}", random_url)))
-        .content_type("text/json")
-        .body(data))
+        .append_header(("Location", format!("/{}", document.id)))
+        .json(json!({"status": "success", "key": document.id})))
 }
