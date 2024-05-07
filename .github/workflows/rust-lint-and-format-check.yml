@@ -1,0 +1,41 @@
+name: Rust lint & format check
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  RUSTFLAGS: -Dwarnings # Turn warnings into errors
+  RUST_CI: true
+
+jobs:
+  check:
+    name: "Ubuntu: cargo clippy && cargo fmt"
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo fmt --all -- --check
+      - run: cargo clippy --all-features --all-targets
+
+  check-win:
+    name: "Windows: cargo clippy"
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo clippy --all-features --all-targets
+
+  check-macos:
+    name: "MacOS: cargo clippy"
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - run: cargo clippy --all-features --all-targets

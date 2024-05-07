@@ -1,7 +1,4 @@
-use env_logger::{
-    fmt::{Color, Style},
-    Builder, Env,
-};
+use env_logger::{Builder, Env};
 use std::io::Write;
 
 pub fn init_logger() {
@@ -9,23 +6,15 @@ pub fn init_logger() {
 
     Builder::from_env(env)
         .format(|buf, record| {
-            let mut style: Style = buf.style();
-            if record.level() == log::Level::Error {
-                style.set_color(Color::Red).set_bold(true);
-            } else if record.level() == log::Level::Warn {
-                style.set_color(Color::Yellow).set_bold(true);
-            }
+            let level_style = buf.default_level_style(record.level());
 
             writeln!(
                 buf,
-                "{}",
-                style.value(format!(
-                    "[{}] [{}] [{}] {}",
-                    record.level(),
-                    record.target(),
-                    chrono::Local::now().format("%d/%m/%Y - %H:%M:%S"),
-                    record.args()
-                )),
+                "{level_style}[{}] [{}] [{}] {}{level_style:#}",
+                record.level(),
+                record.target(),
+                chrono::Local::now().format("%d/%m/%Y - %H:%M:%S"),
+                record.args()
             )
         })
         .init();

@@ -4,9 +4,8 @@
 #[macro_use]
 extern crate diesel;
 
+pub mod api_error;
 pub mod database;
 pub mod routes;
 pub mod tasks;
 pub mod util;
-
-pub mod api_error;
