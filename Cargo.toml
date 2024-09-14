@@ -1,6 +1,6 @@
 [package]
 name = "asthobin"
-version = "0.0.8"
+version = "0.1.0"
 authors = ["Asthowen<contact@asthowen.fr>"]
 edition = "2021"
 description = "AsthoBin is a simple website to share pieces of code with a URL, written in Rust."
@@ -16,6 +16,7 @@ lto = true
 
 [build-dependencies]
 static-files = "0.2.3"
+dotenvy = "0.15.7"
 
 [dependencies]
 diesel-async = { version = "0.5.0", features = ["mysql", "bb8", "async-connection-wrapper"] }

@@ -1,7 +1,7 @@
 use crate::api_error::ApiError;
 use crate::database::mysql::MysqlPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::util::utils::parse_env_or_default;
+use crate::utils::parse_env_or_default;
 use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
 use std::time::{SystemTime, UNIX_EPOCH};

@@ -16,7 +16,7 @@
 <body class="w-screen h-screen bg-dark-2 overflow-hidden">
 <div class="top-0 right-0 fixed flex justify-center items-center text-white mt-6 mr-6 p-2 space-x-4 cursor-pointer bg-dark-1 rounded">
     {%- if let Some(raw_url) = raw_url %}
-    <svg class="size-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" onclick="generateTxtFile();">
+    <svg id="generateFile" class="size-6 hover:opacity-80" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
     </svg>
     <a href="{{ raw_url }}" rel="noopener noreferrer" aria-label="Access the raw file">
@@ -42,12 +42,11 @@
 </div>
 {%- if let Some(code) = code %}
 <pre class="hidden" id="codeAreaPre"><code class="w-screen h-screen p-8" id="codeArea" spellcheck="false">{{ code }}</code></pre>
-<script src="/assets/javascript/highlight.min.js"></script>
-<script src="/assets/javascript/code.js"></script>
+{{ crate::routes::generated_assets::CODE_JS|safe }}
 {%- else %}
 <label for="codeArea" class="absolute text-slate-400 pt-8 pl-3 select-none">></label>
 <textarea class="w-screen h-screen bg-transparent text-slate-100 p-8" id="codeArea" spellcheck="false"></textarea>
-<script src="/assets/javascript/index.js"></script>
+{{ crate::routes::generated_assets::INDEX_JS|safe }}
 {%- endif %}
 </body>
 </html>

@@ -1,4 +1,4 @@
-use crate::util::utils::parse_env_or_default;
+use crate::utils::parse_env_or_default;
 #[cfg(debug_assertions)]
 use actix_files::Files;
 use actix_files::NamedFile;
@@ -16,6 +16,10 @@ pub mod new;
 
 #[cfg(not(debug_assertions))]
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
+
+pub mod generated_assets {
+    include!(concat!(env!("OUT_DIR"), "/generated_assets.rs"));
+}
 
 #[derive(Template)]
 #[template(path = "index.html")]

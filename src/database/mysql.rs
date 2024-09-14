@@ -1,4 +1,4 @@
-use crate::util::utils::{get_key, WAIT_TWO_SECONDS};
+use crate::utils::{get_key, WAIT_TWO_SECONDS};
 use bb8::{Pool, PooledConnection};
 use diesel::prelude::*;
 use diesel_async::async_connection_wrapper::AsyncConnectionWrapper;

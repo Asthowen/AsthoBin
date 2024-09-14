@@ -5,8 +5,8 @@ use asthobin::database::mysql;
 use asthobin::database::mysql::MysqlPool;
 use asthobin::routes;
 use asthobin::tasks::delete;
-use asthobin::util::logger;
-use asthobin::util::utils::{
+use asthobin::utils::logger;
+use asthobin::utils::{
     exit_if_keys_not_exist, get_env_or_default, map_to_ssl_version, parse_env_or_default,
     WAIT_ONE_HOUR,
 };
@@ -16,6 +16,9 @@ use std::path::Path;
 fn main() {
     dotenvy::dotenv().ok();
     logger::init();
+
+    #[cfg(debug_assertions)]
+    exit_if_keys_not_exist(&["VITE_DEV_URL"]);
 
     exit_if_keys_not_exist(&["DATABASE_URL", "BASE_URL"]);
 

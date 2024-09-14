@@ -2,7 +2,7 @@ use crate::api_error::ApiError;
 use crate::database::models::AsthoBin;
 use crate::database::mysql::MysqlPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::util::utils::parse_env_or_default;
+use crate::utils::parse_env_or_default;
 use actix_web::http::StatusCode;
 use actix_web::web::ThinData;
 use actix_web::{web, HttpRequest, HttpResponse};

@@ -1,3 +1,5 @@
+pub mod logger;
+
 use openssl::ssl::SslVersion;
 use std::str::FromStr;
 use std::time::Duration;
