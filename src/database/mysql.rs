@@ -1,12 +1,12 @@
 use crate::utils::{get_key, WAIT_TWO_SECONDS};
-use bb8::{Pool, PooledConnection};
 use diesel::prelude::*;
 use diesel_async::async_connection_wrapper::AsyncConnectionWrapper;
+use diesel_async::pooled_connection::bb8::{Pool, PooledConnection};
 use diesel_async::pooled_connection::AsyncDieselConnectionManager;
 use diesel_async::AsyncMysqlConnection;
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 
-pub type MysqlPool = Pool<AsyncDieselConnectionManager<AsyncMysqlConnection>>;
+pub type MysqlPool = Pool<AsyncMysqlConnection>;
 pub type MysqlPooled<'a> = PooledConnection<'a, AsyncDieselConnectionManager<AsyncMysqlConnection>>;
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();

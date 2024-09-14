@@ -6,12 +6,11 @@ use asthobin::database::mysql::MysqlPool;
 use asthobin::routes;
 use asthobin::tasks::delete;
 use asthobin::utils::logger;
+#[cfg(feature = "rustls")]
+use asthobin::utils::rustls::init_rustls;
 use asthobin::utils::{
-    exit_if_keys_not_exist, get_env_or_default, map_to_ssl_version, parse_env_or_default,
-    WAIT_ONE_HOUR,
+    exit_if_keys_not_exist, get_env_or_default, parse_env_or_default, WAIT_ONE_HOUR,
 };
-use openssl::ssl::{SslAcceptor, SslAcceptorBuilder, SslFiletype, SslMethod};
-use std::path::Path;
 
 fn main() {
     dotenvy::dotenv().ok();
@@ -20,9 +19,9 @@ fn main() {
     #[cfg(debug_assertions)]
     exit_if_keys_not_exist(&["VITE_DEV_URL"]);
 
-    exit_if_keys_not_exist(&["DATABASE_URL", "BASE_URL"]);
+    exit_if_keys_not_exist(&["DATABASE_URL"]);
 
-    let worker_threads_number: usize = parse_env_or_default("ACTIX_WORKER_THREADS_NUMBER", 8);
+    let worker_threads_number: usize = parse_env_or_default("ACTIX_WORKER_THREADS_NUMBER", 4);
 
     actix_web::rt::System::with_tokio_rt(|| {
         tokio::runtime::Builder::new_multi_thread()
@@ -36,7 +35,7 @@ fn main() {
 }
 
 async fn async_main() {
-    let worker_threads_number: usize = parse_env_or_default("ACTIX_WORKER_THREADS_NUMBER", 8);
+    let worker_threads_number: usize = parse_env_or_default("ACTIX_WORKER_THREADS_NUMBER", 4);
     let host: String = get_env_or_default("HOST", "127.0.0.1");
     let port: String = get_env_or_default("PORT", "8080");
     let cors_origin: String = get_env_or_default("CORS_ORIGIN", "");
@@ -79,49 +78,28 @@ async fn async_main() {
     })
     .workers(worker_threads_number);
 
-    let http_private_key: String = get_env_or_default("HTTP_PRIVATE_KEY", "");
-    let http_certificate_chain: String = get_env_or_default("HTTP_CERTIFICATE_CHAIN", "");
-    let http_server_bind = if !http_private_key.is_empty()
-        && !http_certificate_chain.is_empty()
-        && Path::new(&http_private_key).exists()
-        && Path::new(&http_certificate_chain).exists()
+    let http_server_bind;
+
+    #[cfg(feature = "rustls")]
     {
-        let ssl_file_type: String = get_env_or_default("SSL_FILE_TYPE", "PEM");
-        let ssl_ca_file: String = get_env_or_default("SSL_CA_FILE", "");
-
-        let ssl_protocol_min_version: String = get_env_or_default("SSL_PROTOCOL_MIN_VERSION", "");
-        let ssl_protocol_max_version: String = get_env_or_default("SSL_PROTOCOL_MAX_VERSION", "");
-
-        let mut builder: SslAcceptorBuilder =
-            SslAcceptor::mozilla_intermediate(SslMethod::tls()).unwrap();
-
-        if Path::new(&ssl_ca_file).exists() {
-            builder.set_ca_file(&ssl_ca_file).ok();
+        match init_rustls() {
+            Ok(Some(config)) => {
+                http_server_bind = http_server.bind_rustls_0_23(format!("{host}:{port}"), config);
+            }
+            Err(error) => {
+                log::error!("An error occurred when initializing the rustls config: {error}. Start without SSL certificate.");
+                http_server_bind = http_server.bind(format!("{host}:{port}"));
+            }
+            _ => {
+                http_server_bind = http_server.bind(format!("{host}:{port}"));
+            }
         }
-        builder
-            .set_min_proto_version(map_to_ssl_version(&ssl_protocol_min_version.to_lowercase()))
-            .ok();
-        builder
-            .set_max_proto_version(map_to_ssl_version(&ssl_protocol_max_version.to_lowercase()))
-            .ok();
+    }
 
-        builder
-            .set_private_key_file(
-                http_private_key,
-                match ssl_file_type.to_lowercase().as_str() {
-                    "pem" => SslFiletype::PEM,
-                    "asn1" => SslFiletype::ASN1,
-                    &_ => SslFiletype::PEM,
-                },
-            )
-            .unwrap();
-        builder
-            .set_certificate_chain_file(http_certificate_chain)
-            .unwrap();
-        http_server.bind_openssl(format!("{host}:{port}"), builder)
-    } else {
-        http_server.bind(format!("{host}:{port}"))
-    };
+    #[cfg(not(feature = "rustls"))]
+    {
+        http_server_bind = http_server.bind(format!("{host}:{port}"));
+    }
 
     http_server_bind
         .unwrap_or_else(|error| {
@@ -143,5 +121,5 @@ async fn async_main() {
                 error
             );
             std::process::exit(9);
-        })
+        });
 }

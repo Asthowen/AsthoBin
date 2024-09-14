@@ -2,7 +2,7 @@ use crate::api_error::ApiError;
 use crate::database::mysql::MysqlPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use crate::routes::AsthoBinTemplate;
-use crate::utils::{get_key, parse_env_or_default, IGNORED_DOCUMENTS};
+use crate::utils::{parse_env_or_default, IGNORED_DOCUMENTS};
 use actix_web::dev::ConnectionInfo;
 use actix_web::web::ThinData;
 use actix_web::{HttpRequest, HttpResponse};
@@ -38,7 +38,7 @@ pub async fn document(
         Some(document) => document,
         None => {
             return Ok(HttpResponse::Found()
-                .append_header(("Location", get_key("BASE_URL")))
+                .append_header(("Location", "/"))
                 .finish())
         }
     };
@@ -58,7 +58,7 @@ pub async fn document(
     if is_doc {
         let render: String = AsthoBinTemplate {
             code: Some(document),
-            raw_url: Some(format_args!("{}raw/{}", get_key("BASE_URL"), id)),
+            raw_url: Some(format_args!("/raw/{id}")),
         }
         .render()?;
         Ok(HttpResponse::Ok().content_type("text/html").body(render))

@@ -1,6 +1,6 @@
 [package]
 name = "asthobin"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Asthowen<contact@asthowen.fr>"]
 edition = "2021"
 description = "AsthoBin is a simple website to share pieces of code with a URL, written in Rust."
@@ -21,9 +21,8 @@ dotenvy = "0.15.7"
 [dependencies]
 diesel-async = { version = "0.5.0", features = ["mysql", "bb8", "async-connection-wrapper"] }
 tokio = { version = "1.40.0", default-features = false, features = ["rt-multi-thread"] }
-openssl = { version = "0.10.66", features = ["vendored", "v110"] }
-mysqlclient-sys = { features = ["bundled"], version = "0.4.1" }
-actix-web = { version = "4.9.0", features = ["openssl"] }
+rustls-pemfile = { version = "2.1.3", optional = true }
+rustls = { version = "0.23.13", optional = true }
 actix-web-static-files = "4.0.1"
 diesel_migrations = "2.2.0"
 actix-governor = "0.5.0"
@@ -32,6 +31,7 @@ serde_json = "1.0.128"
 env_logger = "0.11.5"
 actix-files = "0.6.6"
 actix-cors = "0.7.0"
+actix-web = "4.9.0"
 dotenvy = "0.15.7"
 chrono = "0.4.38"
 serde = "1.0.210"
@@ -39,4 +39,7 @@ diesel = "2.2.4"
 rinja = "0.3.3"
 log = "0.4.22"
 rand = "0.8.5"
-bb8 = "0.8.5"
+
+[features]
+default = []
+https-support = ["actix-web/rustls-0_23", "rustls", "rustls-pemfile"]

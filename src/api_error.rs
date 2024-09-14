@@ -1,8 +1,7 @@
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
-use bb8::RunError;
 use diesel::result::Error as DieselError;
-use diesel_async::pooled_connection::PoolError;
+use diesel_async::pooled_connection::bb8::RunError;
 use serde_json::json;
 use std::convert::Infallible;
 use std::fmt;
@@ -68,8 +67,8 @@ impl From<DieselError> for ApiError {
     }
 }
 
-impl From<RunError<PoolError>> for ApiError {
-    fn from(error: RunError<PoolError>) -> Self {
+impl From<RunError> for ApiError {
+    fn from(error: RunError) -> Self {
         Self::new_log(
             StatusCode::INTERNAL_SERVER_ERROR,
             format!("A bb8 (pool) error has occurred: {error}"),

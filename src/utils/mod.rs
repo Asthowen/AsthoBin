@@ -1,6 +1,7 @@
 pub mod logger;
+#[cfg(feature = "rustls")]
+pub mod rustls;
 
-use openssl::ssl::SslVersion;
 use std::str::FromStr;
 use std::time::Duration;
 
@@ -15,22 +16,22 @@ pub const IGNORED_DOCUMENTS: [&str; 5] = [
     ".htaccess",
 ];
 
-pub fn get_env_or_default(var: &str, default_value: &str) -> String {
-    std::env::var(var).unwrap_or_else(|_| default_value.to_owned())
+pub fn get_env_or_default(key_name: &str, default_value: &str) -> String {
+    std::env::var(key_name).unwrap_or_else(|_| default_value.to_owned())
 }
 
-pub fn parse_env_or_default<T: FromStr>(var: &str, default_value: T) -> T
+pub fn parse_env_or_default<T: FromStr>(key_name: &str, default_value: T) -> T
 where
     <T as FromStr>::Err: std::fmt::Debug,
 {
-    std::env::var(var)
+    std::env::var(key_name)
         .ok()
-        .and_then(|val| val.parse::<T>().ok())
+        .and_then(|value| value.parse::<T>().ok())
         .unwrap_or(default_value)
 }
-pub fn exit_if_key_not_exist(key: &str) {
-    if std::env::var(key).is_err() {
-        log::error!("The key {key} does not exist in the .env file.");
+pub fn exit_if_key_not_exist(key_name: &str) {
+    if std::env::var(key_name).is_err() {
+        log::error!("The key {key_name} does not exist in the .env file.");
         std::process::exit(1);
     }
 }
@@ -42,15 +43,4 @@ pub fn exit_if_keys_not_exist(keys: &[&str]) {
 
 pub fn get_key(key_name: &str) -> String {
     std::env::var(key_name).unwrap()
-}
-
-pub fn map_to_ssl_version(ssl_version: &str) -> Option<SslVersion> {
-    match ssl_version {
-        "ssl3" => Some(SslVersion::SSL3),
-        "tls1" => Some(SslVersion::TLS1),
-        "tls1.1" => Some(SslVersion::TLS1_1),
-        "tls1.2" => Some(SslVersion::TLS1_2),
-        "tls1.3" => Some(SslVersion::TLS1_3),
-        _ => None,
-    }
 }
