@@ -8,7 +8,7 @@ import eslintParserTypescript from "@typescript-eslint/parser";
 
 export default [
     {
-        ignores: ["node_modules/**", "static/**", "target/**", "src/**", "migrations/**"],
+        ignores: ["node_modules/**", "static/**", "target/**", "src/**", "migrations/**", "docker/**", ".github/**"],
         files: ["frontend/ts/*.ts", "vite.config.mts", "tailwind.config.ts"],
         languageOptions: {
             ecmaVersion: "latest",

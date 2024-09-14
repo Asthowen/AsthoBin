@@ -407,6 +407,7 @@ dependencies = [
  "dotenvy",
  "env_logger",
  "log",
+ "mysqlclient-sys",
  "openssl",
  "rand",
  "rinja",
@@ -1369,6 +1370,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ec2a862134d2a7d32d7983ddcdd1c4923530833c9f2ea1a44fc5fa473989058"
 
 [[package]]
+name = "link-cplusplus"
+version = "1.0.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9d240c6f7e1ba3a28b0249f774e6a9dd0175054b52dfbb61b16eb8505c3785c9"
+dependencies = [
+ "cc",
+]
+
+[[package]]
 name = "local-channel"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1541,6 +1551,29 @@ dependencies = [
  "thiserror",
  "uuid",
  "zstd",
+]
+
+[[package]]
+name = "mysqlclient-src"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cc9eeee452f217e9d234e34f5ba5e53c5fef9c147c98a80311f38358826c695"
+dependencies = [
+ "cmake",
+ "link-cplusplus",
+ "openssl-src",
+ "openssl-sys",
+]
+
+[[package]]
+name = "mysqlclient-sys"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "478e2040dbc35c73927b77a2be91a496de19deab376a6982ed61e89592434619"
+dependencies = [
+ "mysqlclient-src",
+ "pkg-config",
+ "vcpkg",
 ]
 
 [[package]]

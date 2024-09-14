@@ -22,6 +22,7 @@ dotenvy = "0.15.7"
 diesel-async = { version = "0.5.0", features = ["mysql", "bb8", "async-connection-wrapper"] }
 tokio = { version = "1.40.0", default-features = false, features = ["rt-multi-thread"] }
 openssl = { version = "0.10.66", features = ["vendored", "v110"] }
+mysqlclient-sys = { features = ["bundled"], version = "0.4.1" }
 actix-web = { version = "4.9.0", features = ["openssl"] }
 actix-web-static-files = "4.0.1"
 diesel_migrations = "2.2.0"

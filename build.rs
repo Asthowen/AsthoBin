@@ -38,8 +38,6 @@ fn generate_scripts_values(scripts: Vec<String>) -> String {
 }
 
 fn main() -> std::io::Result<()> {
-    dotenvy::dotenv().ok();
-
     #[cfg(not(debug_assertions))]
     {
         shell("mkdir static/assets/css")?;
@@ -66,6 +64,8 @@ fn main() -> std::io::Result<()> {
 
     #[cfg(debug_assertions)]
     {
+        dotenvy::dotenv().ok();
+
         let vite_dev_url = std::env::var("VITE_DEV_URL").unwrap();
         add_assets_script_file(
             &generate_scripts_values(vec![
