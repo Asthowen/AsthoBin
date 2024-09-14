@@ -95,7 +95,6 @@ To configure **AsthoBin**, just use the example configuration: [`.env.example`](
 | **HTTP_PRIVATE_KEY**            | **Nothing (optional)** | The file path of SSL certificate private key.                          |
 | **HTTP_CERTIFICATE_CHAIN**      | **Nothing (optional)** | The file path of SSL certificate chain.                                |
 | **TLS_VERSIONS**                | **Nothing (optional)** | List of supported TLS protocols (tls1.2/tls1.3), e.g: `tls1.2,tls1.3`. |
-| **SSL_PROTOCOL_MAX_VERSION**    | **Nothing (optional)** | The maximum value of SSL protocol (tls1.2/tls1.3).                     |
 
 ## Development
 ### Before submit a PR
