@@ -19,8 +19,8 @@ pub async fn get_pool() -> MysqlPool {
         .connection_timeout(WAIT_TWO_SECONDS)
         .build(manager)
         .await
-        .unwrap_or_else(|e| {
-            log::error!("{}", e.to_string());
+        .unwrap_or_else(|error| {
+            log::error!("Error when building the MySQL pool: {error}");
             std::process::exit(9);
         })
 }
@@ -29,21 +29,19 @@ pub async fn run_migration() {
     tokio::task::spawn_blocking(move || {
         let mut conn =
             AsyncConnectionWrapper::<AsyncMysqlConnection>::establish(&get_key("DATABASE_URL"))
-                .unwrap_or_else(|e| {
-                    log::error!(
-                        "Error when connecting to database to deploy migrations: {}",
-                        e.to_string()
-                    );
+                .unwrap_or_else(|error| {
+                    log::error!("Error when connecting to database to deploy migrations: {error}");
                     std::process::exit(1);
                 });
-        conn.run_pending_migrations(MIGRATIONS).unwrap_or_else(|e| {
-            log::error!("Error when deploying migrations: {}", e.to_string());
-            std::process::exit(1);
-        });
+        conn.run_pending_migrations(MIGRATIONS)
+            .unwrap_or_else(|error| {
+                log::error!("Error when deploying migrations: {error}");
+                std::process::exit(1);
+            });
     })
     .await
-    .unwrap_or_else(|e| {
-        log::error!("Error when deploying migrations: {}", e.to_string());
+    .unwrap_or_else(|error| {
+        log::error!("Error when deploying migrations: {error}");
         std::process::exit(1);
     });
 }

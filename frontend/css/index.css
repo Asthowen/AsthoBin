@@ -4,7 +4,7 @@
 
 @font-face {
     font-family: 'Cascadia Code';
-    src: url('/static/assets/fonts/CascadiaCode.ttf') format('truetype');
+    src: url('/assets/fonts/CascadiaCode.ttf') format('truetype');
 }
 
 #codeArea {
