@@ -6,9 +6,9 @@ use crate::util::utils::{get_key, parse_env_or_default, IGNORED_DOCUMENTS};
 use actix_web::dev::ConnectionInfo;
 use actix_web::web::ThinData;
 use actix_web::{HttpRequest, HttpResponse};
-use askama::Template;
 use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
+use rinja::Template;
 use std::cell::Ref;
 
 pub async fn document(

@@ -1,7 +1,7 @@
 use crate::api_error::ApiError;
 use crate::routes::AsthoBinTemplate;
 use actix_web::HttpResponse;
-use askama::Template;
+use rinja::Template;
 
 pub async fn index() -> Result<HttpResponse, ApiError> {
     let render: String = AsthoBinTemplate {

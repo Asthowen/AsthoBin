@@ -7,7 +7,7 @@ use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyE
 use actix_web::{get, web, Responder};
 #[cfg(not(debug_assertions))]
 use actix_web_static_files::ResourceFiles;
-use askama::Template;
+use rinja::Template;
 use std::fmt::Arguments;
 
 pub mod document;
