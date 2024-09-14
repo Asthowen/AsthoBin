@@ -1,4 +1,5 @@
 use crate::database::schema::asthobin;
+use diesel::{Insertable, Queryable};
 use serde::Deserialize;
 
 #[derive(Debug, Clone, Insertable, Deserialize, Queryable)]

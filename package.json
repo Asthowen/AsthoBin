@@ -1,18 +1,16 @@
 {
   "name": "asthobin",
-  "version": "0.0.7",
+  "version": "0.1.0",
   "description": "AsthoBin is a simple website to share pieces of code with a URL, written in Rust.",
   "license": "GNU General Public License v3.0",
   "scripts": {
-    "build": "pnpm exec tailwindcss build -i frontend/css/index.css -o static/assets/css/index.css -c tailwind.config.js",
+    "build": "pnpm exec tailwindcss build -i frontend/css/index.css -o static/assets/css/index.css -c tailwind.config.ts",
     "autoprefixer": "postcss static/assets/css/index.css -u autoprefixer --no-map -o static/assets/css/index.css",
     "minify": "postcss static/assets/css/index.css -u cssnano --no-map -o static/assets/css/index.css",
-
-    "watch": "pnpm exec tailwindcss build -i frontend/css/index.css -o static/assets/css/index.css -c tailwind.config.js --watch",
-
-    "dev": "pnpm run build",
-    "prod": "pnpm run build && pnpm run autoprefixer && pnpm run minify",
-
+    "tailwind-dev": "pnpm exec tailwindcss build -i frontend/css/index.css -o static/assets/css/index.css -c tailwind.config.ts --watch",
+    "vite-dev": "pnpm exec vite",
+    "prod": "vite build && pnpm run build && pnpm run autoprefixer && pnpm run minify",
+    "lint": "eslint . --fix",
     "bump-dependencies": "pnpm exec ncu -u && pnpm i"
   },
   "repository": {
@@ -24,14 +22,26 @@
     "url": "https://github.com/Asthowen/AsthoBin/issues"
   },
   "homepage": "https://github.com/Asthowen/AsthoBin#README.md",
-  "devDependencies": {
-    "tailwindcss": "^3.4.1"
-  },
   "dependencies": {
-    "autoprefixer": "^10.4.17",
-    "cssnano": "^6.0.3",
-    "postcss": "^8.4.33",
+    "highlight.js": "^11.10.0",
+    "vite": "^5.4.5"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
+    "autoprefixer": "^10.4.20",
+    "cssnano": "^7.0.6",
+    "eslint": "^9.10.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-import-resolver-alias": "^1.1.2",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "npm-check-updates": "^17.1.1",
+    "postcss": "^8.4.45",
     "postcss-cli": "^11.0.0",
-    "npm-check-updates": "^16.14.14"
+    "prettier": "^3.3.3",
+    "tailwindcss": "^3.4.11",
+    "typescript": "^5.6.2"
   }
 }

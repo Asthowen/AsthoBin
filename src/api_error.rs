@@ -18,7 +18,7 @@ pub struct ApiError {
 }
 
 impl ApiError {
-    pub fn new(
+    pub const fn new(
         status_code: StatusCode,
         log_message: Option<String>,
         http_message: Option<String>,
@@ -60,35 +60,35 @@ impl fmt::Display for ApiError {
 }
 
 impl From<DieselError> for ApiError {
-    fn from(error: DieselError) -> ApiError {
-        ApiError::new_log(
+    fn from(error: DieselError) -> Self {
+        Self::new_log(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("A diesel error has occurred: {}", error),
+            format!("A diesel error has occurred: {error}"),
         )
     }
 }
 
 impl From<RunError<PoolError>> for ApiError {
-    fn from(error: RunError<PoolError>) -> ApiError {
-        ApiError::new_log(
+    fn from(error: RunError<PoolError>) -> Self {
+        Self::new_log(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("A bb8 (pool) error has occurred: {}", error),
+            format!("A bb8 (pool) error has occurred: {error}"),
         )
     }
 }
 
-impl From<askama::Error> for ApiError {
-    fn from(error: askama::Error) -> ApiError {
-        ApiError::new_log(
+impl From<rinja::Error> for ApiError {
+    fn from(error: rinja::Error) -> Self {
+        Self::new_log(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("An Askama error has occurred: {}", error),
+            format!("A rinja error has occurred: {error}"),
         )
     }
 }
 
 impl From<FromUtf8Error> for ApiError {
-    fn from(_: FromUtf8Error) -> ApiError {
-        ApiError::new_message(
+    fn from(_: FromUtf8Error) -> Self {
+        Self::new_message(
             StatusCode::BAD_REQUEST,
             "Text cannot be converted to UTF-8.",
         )
@@ -96,31 +96,28 @@ impl From<FromUtf8Error> for ApiError {
 }
 
 impl From<TryFromIntError> for ApiError {
-    fn from(error: TryFromIntError) -> ApiError {
-        ApiError::new_message(
+    fn from(error: TryFromIntError) -> Self {
+        Self::new_message(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!(
-                "An error has occurred when try convert an integer: {}",
-                error
-            ),
+            format!("An error has occurred when try convert an integer: {error}",),
         )
     }
 }
 
 impl From<Infallible> for ApiError {
-    fn from(error: Infallible) -> ApiError {
-        ApiError::new_log(
+    fn from(error: Infallible) -> Self {
+        Self::new_log(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("An 'Infallible' error has occurred: {}", error),
+            format!("An 'Infallible' error has occurred: {error}"),
         )
     }
 }
 
 impl From<SystemTimeError> for ApiError {
-    fn from(error: SystemTimeError) -> ApiError {
-        ApiError::new_log(
+    fn from(error: SystemTimeError) -> Self {
+        Self::new_log(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("An 'SystemTimeError' error has occurred: {}", error),
+            format!("An 'SystemTimeError' error has occurred: {error}"),
         )
     }
 }

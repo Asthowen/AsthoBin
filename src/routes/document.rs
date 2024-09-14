@@ -1,82 +1,68 @@
 use crate::api_error::ApiError;
-use crate::database::models::AsthoBin;
-use crate::database::mysql::{MysqlPool, MysqlPooled};
+use crate::database::mysql::MysqlPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::util::utils::{get_key, IGNORED_DOCUMENTS};
+use crate::routes::AsthoBinTemplate;
+use crate::utils::{get_key, parse_env_or_default, IGNORED_DOCUMENTS};
 use actix_web::dev::ConnectionInfo;
-use actix_web::{web, HttpRequest, HttpResponse};
-use askama::Template;
+use actix_web::web::ThinData;
+use actix_web::{HttpRequest, HttpResponse};
 use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
+use rinja::Template;
 use std::cell::Ref;
 
-#[derive(Template)]
-#[template(path = "code.html")]
-struct Code {
-    code: String,
-    raw_url: String,
-}
-
 pub async fn document(
-    pool: web::Data<MysqlPool>,
+    ThinData(pool): ThinData<MysqlPool>,
     query: HttpRequest,
 ) -> Result<HttpResponse, ApiError> {
-    let (is_doc, id): (bool, String) =
-        if let Some(document_id) = query.match_info().get("document_id") {
-            (true, document_id.parse()?)
-        } else {
-            (false, query.match_info().get("raw_id").unwrap().parse()?)
-        };
+    let (is_doc, id): (bool, &str) = match (
+        query.match_info().get("document_id"),
+        query.match_info().get("raw_id"),
+    ) {
+        (Some(document_id), None) => (true, document_id),
+        (None, Some(raw_id)) => (false, raw_id),
+        _ => return Ok(HttpResponse::BadRequest().finish()),
+    };
 
-    if IGNORED_DOCUMENTS.contains(&id.as_str()) {
+    if IGNORED_DOCUMENTS.contains(&id) {
         return Ok(HttpResponse::NotFound().finish());
     }
 
-    let mut conn: MysqlPooled = pool.get().await?;
-
-    let document: Option<AsthoBin> = asthobin_dsl::asthobin
-        .filter(asthobin_dsl::id.like(&id))
-        .first::<AsthoBin>(&mut conn)
+    let document_opt: Option<String> = asthobin_dsl::asthobin
+        .select(asthobin_dsl::content)
+        .filter(asthobin_dsl::id.eq(&id))
+        .first::<String>(&mut pool.get().await?)
         .await
         .optional()?;
+    let document = match document_opt {
+        Some(document) => document,
+        None => {
+            return Ok(HttpResponse::Found()
+                .append_header(("Location", get_key("BASE_URL")))
+                .finish())
+        }
+    };
 
-    if let Some(document) = document {
-        let log_on_access: String =
-            std::env::var("LOG_ON_ACCESS").unwrap_or_else(|_| "false".to_owned());
-        if log_on_access == "true" {
-            let connection_info: Ref<ConnectionInfo> = query.connection_info();
-            let current_url: String = format!(
-                "{}://{}{}",
-                connection_info.scheme(),
-                connection_info.host(),
-                query.path()
-            );
-            let user_ip: String = query
-                .connection_info()
-                .realip_remote_addr()
-                .unwrap_or("unknown")
-                .to_owned();
-            log::info!(
-                "Access to the code present at: {} - IP: {}.",
-                current_url,
-                user_ip
-            );
+    let log_on_access: bool = parse_env_or_default("LOG_ON_ACCESS", false);
+    if log_on_access {
+        let connection_info: Ref<ConnectionInfo> = query.connection_info();
+        let current_url: String = format!(
+            "{}://{}{}",
+            connection_info.scheme(),
+            connection_info.host(),
+            query.path()
+        );
+        let user_ip = connection_info.realip_remote_addr().unwrap_or("unknown");
+        log::info!("Access to the code present at: {current_url} - IP: {user_ip}.",);
+    }
+    if is_doc {
+        let render: String = AsthoBinTemplate {
+            code: Some(document),
+            raw_url: Some(format_args!("{}raw/{}", get_key("BASE_URL"), id)),
         }
-        if is_doc {
-            let render: String = Code {
-                code: document.content,
-                raw_url: format!("{}raw/{}", get_key("BASE_URL"), id),
-            }
-            .render()?;
-            Ok(HttpResponse::Ok().content_type("text/html").body(render))
-        } else {
-            Ok(HttpResponse::Ok()
-                .content_type("text/plain")
-                .body(document.content))
-        }
+        .render()?;
+        Ok(HttpResponse::Ok().content_type("text/html").body(render))
     } else {
-        Ok(HttpResponse::Found()
-            .append_header(("Location", get_key("BASE_URL")))
-            .finish())
+        Ok(HttpResponse::Ok().content_type("text/plain").body(document))
     }
 }

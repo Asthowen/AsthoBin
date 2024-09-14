@@ -1,7 +1,7 @@
 use env_logger::{Builder, Env};
 use std::io::Write;
 
-pub fn init_logger() {
+pub fn init() {
     let env: Env = Env::default().filter_or("MY_LOG_LEVEL", "DEBUG,actix_server::builder=off,actix_server::server=off,actix_server::worker=off,actix_server::accept=off,h2=off");
 
     Builder::from_env(env)

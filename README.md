@@ -63,11 +63,6 @@ git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
 ```
 **For the next step you need to have Rust and Cargo installed on your PC, for that follow the [official documentation](https://www.rust-lang.org/tools/install). You will also need [pnpm](https://pnpm.io/).**
 
-Install diesel-cli:
-```bash
-cargo install diesel_cli --no-default-features --features mysql
-```
-
 Now compile a release:
 ```bash
 cargo build --release

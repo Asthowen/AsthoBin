@@ -1,6 +1,6 @@
 [package]
 name = "asthobin"
-version = "0.0.8"
+version = "0.1.0"
 authors = ["Asthowen<contact@asthowen.fr>"]
 edition = "2021"
 description = "AsthoBin is a simple website to share pieces of code with a URL, written in Rust."
@@ -16,24 +16,27 @@ lto = true
 
 [build-dependencies]
 static-files = "0.2.3"
+dotenvy = "0.15.7"
 
 [dependencies]
-diesel-async = { version = "0.4.1", features = ["mysql", "bb8", "async-connection-wrapper"] }
-tokio = { version = "1.37.0", default-features = false, features = ["rt-multi-thread"] }
-openssl = { version = "0.10.64", features = ["vendored", "v110"] }
-actix-web = { version = "4.5.1", features = ["openssl"] }
+diesel-async = { version = "0.5.0", features = ["mysql", "bb8", "async-connection-wrapper"] }
+tokio = { version = "1.40.0", default-features = false, features = ["rt-multi-thread"] }
+openssl = { version = "0.10.66", features = ["vendored", "v110"] }
+mysqlclient-sys = { features = ["bundled"], version = "0.4.1" }
+actix-web = { version = "4.9.0", features = ["openssl"] }
 actix-web-static-files = "4.0.1"
-diesel_migrations = "2.1.0"
+diesel_migrations = "2.2.0"
 actix-governor = "0.5.0"
-static-files = "0.2.3"
-serde_json = "1.0.116"
-env_logger = "0.11.3"
+static-files = "0.2.4"
+serde_json = "1.0.128"
+env_logger = "0.11.5"
+actix-files = "0.6.6"
 actix-cors = "0.7.0"
 dotenvy = "0.15.7"
 chrono = "0.4.38"
-serde = "1.0.200"
-askama = "0.12.1"
-diesel = "2.1.6"
-log = "0.4.21"
+serde = "1.0.210"
+diesel = "2.2.4"
+rinja = "0.3.3"
+log = "0.4.22"
 rand = "0.8.5"
-bb8 = "0.8.3"
+bb8 = "0.8.5"
