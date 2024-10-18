@@ -1,6 +1,6 @@
 import { Config } from "tailwindcss";
 
-const config: Config = {
+export default {
   content: [
     "frontend/templates/*.html",
     "frontend/css/*.css",
@@ -16,5 +16,4 @@ const config: Config = {
       },
     },
   },
-};
-export default config;
+} satisfies Config;

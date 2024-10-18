@@ -4,7 +4,7 @@
     "useDefineForClassFields": true,
     "module": "ESNext",
     "lib": ["ESNext", "DOM"],
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "strict": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -17,5 +17,5 @@
     "allowJs": true,
     "baseUrl": "./",
   },
-  "include": ["frontend", "vite.config.mts", "tailwind.config.ts"]
+  "include": ["frontend", "vite.config.mts", "tailwind.config.ts", "postcss.config.mts", "eslint.config.mts"]
 }

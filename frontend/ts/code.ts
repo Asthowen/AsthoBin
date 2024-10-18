@@ -19,11 +19,11 @@ setTimeout(
 document.getElementById("generateFile")!.onclick = () => {
   if (codeArea.textContent === null) return;
 
-  let data = new Blob([codeArea.textContent], {
+  const data = new Blob([codeArea.textContent], {
     type: "text/plain",
   });
   const objectURL = window.URL.createObjectURL(data);
-  let a = document.createElement("a");
+  const a = document.createElement("a");
   a.style.display = "none";
   a.href = objectURL;
   a.download = `${window.location.pathname.split("/")[1]}.${languageExtensions[detectedLanguage] ?? "txt"}`;
