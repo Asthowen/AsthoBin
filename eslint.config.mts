@@ -38,12 +38,5 @@ export default [
       ...typescriptPlugin.configs.strict.rules,
       "@typescript-eslint/no-non-null-assertion": "off",
     },
-    settings: {
-      "import/resolver": {
-        typescript: {
-          project: "./tsconfig.json",
-        },
-      },
-    },
   },
 ] satisfies FlatConfig.Config[];

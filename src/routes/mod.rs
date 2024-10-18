@@ -36,7 +36,7 @@ async fn favicon() -> actix_web::Result<impl Responder> {
 pub fn setup(config: &mut web::ServiceConfig) {
     let governor_conf: GovernorConfig<PeerIpKeyExtractor, NoOpMiddleware> =
         GovernorConfigBuilder::default()
-            .per_second(parse_env_or_default("RATELIMIT_BETWEEN_SAVE", 2))
+            .seconds_per_request(parse_env_or_default("RATELIMIT_BETWEEN_SAVE", 2))
             .burst_size(parse_env_or_default("RATELIMIT_ALLOWED_BEFORE", 4))
             .finish()
             .unwrap_or_else(|| {
