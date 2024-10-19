@@ -8,6 +8,7 @@ repository = "https://github.com/Asthowen/AsthoBin"
 readme = "README.md"
 license = "GPL-3.0"
 keywords = ["asthobin", "paste", "rust"]
+publish = false
 
 [profile.release]
 codegen-units = 1
