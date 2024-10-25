@@ -7,7 +7,7 @@
     src: url('/assets/fonts/CascadiaCode.ttf') format('truetype');
 }
 
-#codeArea {
+#codeArea, #codeContainer {
     font-family: 'Cascadia Code', sans-serif;
     outline: none;
     resize: none;

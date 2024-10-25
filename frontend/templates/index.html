@@ -41,7 +41,7 @@
     </a>
 </div>
 {%- if let Some(code) = code %}
-<pre class="hidden" id="codeAreaPre"><code class="w-screen h-screen p-8" id="codeArea" spellcheck="false">{{ code }}</code></pre>
+<div class="hidden w-screen h-screen p-8" id="codeContainer">{{ code }}</div>
 {{ crate::routes::generated_assets::CODE_JS|safe }}
 {%- else %}
 <label for="codeArea" class="absolute text-slate-400 pt-8 pl-3 select-none">></label>
