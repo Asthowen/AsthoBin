@@ -1,9 +1,11 @@
 pub mod logger;
 #[cfg(feature = "rustls")]
 pub mod rustls;
+pub mod syntect;
 
+use crate::api_error::ApiError;
 use std::str::FromStr;
-use std::time::Duration;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 pub const WAIT_TWO_SECONDS: Duration = Duration::from_secs(2);
 pub const WAIT_ONE_HOUR: Duration = Duration::from_secs(3600);
@@ -43,4 +45,10 @@ pub fn exit_if_keys_not_exist(keys: &[&str]) {
 
 pub fn get_key(key_name: &str) -> String {
     std::env::var(key_name).unwrap()
+}
+
+pub fn get_unix_time() -> Result<i64, ApiError> {
+    Ok(i64::try_from(
+        SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs(),
+    )?)
 }

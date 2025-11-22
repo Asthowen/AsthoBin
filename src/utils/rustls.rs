@@ -42,7 +42,12 @@ pub fn init_rustls() -> Result<Option<ServerConfig>, ApiError> {
         ));
     }
     if !certificate_chain_path.exists() {
-        return Err(ApiError::new_log(StatusCode::INTERNAL_SERVER_ERROR, format!("The file in variable 'HTTP_CERTIFICATE_CHAIN' does not exist ({certificate_chain}).")));
+        return Err(ApiError::new_log(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!(
+                "The file in variable 'HTTP_CERTIFICATE_CHAIN' does not exist ({certificate_chain})."
+            ),
+        ));
     }
 
     let mut key_file = open_file(&private_key, "HTTP_PRIVATE_KEY")?;

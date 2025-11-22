@@ -121,10 +121,19 @@ impl From<SystemTimeError> for ApiError {
     }
 }
 
+impl From<syntect::Error> for ApiError {
+    fn from(error: syntect::Error) -> Self {
+        Self::new_log(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            format!("An 'syntect' error has occurred: {error}"),
+        )
+    }
+}
+
 impl ResponseError for ApiError {
     fn error_response(&self) -> HttpResponse {
         if let Some(log_message) = &self.log_message {
-            log::error!("{}", log_message);
+            log::error!("{log_message}");
         }
 
         if let Some(http_message) = &self.http_message {

@@ -1,12 +1,19 @@
+import hljs from "highlight.js";
+
 const codeArea = document.getElementById("codeArea")! as HTMLTextAreaElement;
 
 document.getElementById("saveButton")!.onclick = async () => {
   const content = codeArea.value.trim();
   if (!content) return;
 
+  const { language: detectedLanguage } = hljs.highlightAuto(content);
+
   const response = await fetch("/new", {
     method: "POST",
-    headers: { "Content-Type": "text/plain" },
+    headers: {
+      "Content-Type": "text/plain",
+      Language: detectedLanguage || "txt",
+    },
     mode: "cors",
     cache: "default",
     body: content,

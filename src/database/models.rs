@@ -7,5 +7,6 @@ use serde::Deserialize;
 pub struct AsthoBin {
     pub id: String,
     pub content: String,
+    pub language: String,
     pub time: i64,
 }

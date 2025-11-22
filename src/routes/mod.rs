@@ -4,7 +4,7 @@ use actix_files::Files;
 use actix_files::NamedFile;
 use actix_governor::governor::middleware::NoOpMiddleware;
 use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyExtractor};
-use actix_web::{get, web, Responder};
+use actix_web::{Responder, get, web};
 #[cfg(not(debug_assertions))]
 use actix_web_static_files::ResourceFiles;
 use rinja::Template;
@@ -21,11 +21,12 @@ pub mod generated_assets {
     include!(concat!(env!("OUT_DIR"), "/generated_assets.rs"));
 }
 
-#[derive(Template)]
+#[derive(Default, Template)]
 #[template(path = "index.html")]
 struct AsthoBinTemplate<'a> {
     code: Option<String>,
     raw_url: Option<Arguments<'a>>,
+    language: Option<String>,
 }
 
 #[get("/favicon.ico")]
