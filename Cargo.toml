@@ -1,6 +1,6 @@
 [package]
 name = "asthobin"
-version = "0.1.3"
+version = "0.2.0"
 authors = ["Asthowen<contact@asthowen.fr>"]
 edition = "2024"
 description = "AsthoBin is a simple website to share pieces of code with a URL, written in Rust."
