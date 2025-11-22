@@ -15,6 +15,8 @@ pub enum ApiError {
     Diesel(#[from] diesel::result::Error),
     #[error("bb8 error: {0}")]
     Bb8(#[from] diesel_async::pooled_connection::bb8::RunError),
+    #[error("Creation pool error: {0}")]
+    Bb8Pool(#[from] diesel_async::pooled_connection::PoolError),
     #[error("Askama error: {0}")]
     Askama(#[from] askama::Error),
     #[error("Configuration error: {0}")]

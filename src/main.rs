@@ -3,8 +3,8 @@ use actix_web::web::{Data, ThinData};
 use actix_web::{App, HttpResponse, HttpServer, web};
 use asthobin::api_error::ApiError;
 use asthobin::config::Config;
-use asthobin::database::mysql;
-use asthobin::database::mysql::MysqlPool;
+use asthobin::database::postgres;
+use asthobin::database::postgres::PgPool;
 use asthobin::routes::setup;
 use asthobin::tasks::delete;
 use asthobin::utils::WAIT_ONE_HOUR;
@@ -15,7 +15,7 @@ use std::path::Path;
 use syntect::highlighting::{Color, ThemeSet};
 use syntect::parsing::SyntaxSet;
 
-#[actix_web::main]
+#[tokio::main(flavor = "multi_thread")]
 async fn main() -> std::io::Result<()> {
     dotenvy::dotenv().ok();
     logger::init();
@@ -74,11 +74,11 @@ async fn start() -> Result<(), ApiError> {
     let formated_code_cache: Data<DashMap<String, (String, String, i64)>> =
         Data::new(DashMap::new());
 
-    mysql::run_migration(config.database_url.clone()).await;
+    postgres::run_migration(&config.database_url).await?;
 
-    let pool: MysqlPool = mysql::get_pool(&config.database_url).await;
+    let pool: PgPool = postgres::get_pool(&config).await?;
 
-    let pool_clone: MysqlPool = pool.clone();
+    let pool_clone: PgPool = pool.clone();
     let config_clone = Data::clone(&config);
     let formated_code_cache_clone = Data::clone(&formated_code_cache);
     tokio::task::spawn(async move {

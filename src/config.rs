@@ -21,4 +21,7 @@ pub struct Config {
     pub ratelimit_between_save: u64,
     #[confik(default = 4u32)]
     pub ratelimit_allowed_before: u32,
+    pub pool_max_connections: Option<u32>,
+    pub pool_min_reserved_connections: Option<u32>,
+    pub pool_connection_timeout: Option<u64>,
 }

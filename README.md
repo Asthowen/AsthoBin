@@ -42,13 +42,14 @@ Start by cloning the repo:
 git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
 ```
 
-After that, create a database with the name you want, then edit `.env` config file, for this please refer to [configuration](#configuration).
+After that, create a **PostgreSQL** database with the name you want, then edit `.env` config file, for this please refer to [configuration](#configuration).
 
 And finally, run Docker container (**do not forget to change the two ports, one for AsthoBin and the other for your SQL database**):
 ```bash
 docker run -d \
   --name=asthobin \
   -p 8080:8080 \
+  -p 3306:3306 \
   --restart unless-stopped \
   --env-file .env \
   asthowen/asthobin:latest
@@ -67,6 +68,11 @@ Now compile a release:
 cargo build --release
 ```
 
+You can also enable https support by activating the `https-support` feature (enabled by default in the Docker image):
+```bash
+cargo build --release --features https-support
+```
+
 Your executable will be in the `target/release/` folder, it is named `asthobin`.
 
 ## Configuration
@@ -74,19 +80,22 @@ To configure **AsthoBin**, just use the example configuration: [`.env.example`](
 
 ### List of variables
 
-| Key                          | Default                                                     | Description                                         |
-|:-----------------------------|:------------------------------------------------------------|:----------------------------------------------------|
-| **HOST**                     | 127.0.0.1                                                   | The desired hostname to launch AsthoBin.            |
-| **PORT**                     | 8080                                                        | The desired port to launch AsthoBin.                |
-| **DATABASE_URL**             | **Nothing (required, unless DATABASE_URL_FILE is present)** | The URL of your database.                           |
-| **DATABASE_URL_FILE**        | **Nothing (required, unless DATABASE_URL is present)**      | Path to a file containing the URL of your database. |
-| **CORS_ORIGIN**              | *                                                           | CORS parameters.                                    |
-| **DELETE_TIME**              | 604800                                                      | Time (in seconds) for storing a bin.                |
-| **LOG_ON_ACCESS**            | false                                                       | Display a log when a user access to a file.         |
-| **LOG_ON_SAVE**              | false                                                       | Display a log when a user creates a file.           |
-| **RATELIMIT_BETWEEN_SAVE**   | 2                                                           | Number of seconds between each file save.           |
-| **RATELIMIT_ALLOWED_BEFORE** | 4                                                           | Number of requests before blocking.                 |
-| **TZ**                       | System value                                                | The time zone of the logger, e.g: `Europe/Paris`.   |
+| Key                               | Default                                                     | Description                                                    |
+|:----------------------------------|:------------------------------------------------------------|:---------------------------------------------------------------|
+| **HOST**                          | 127.0.0.1                                                   | The desired hostname to launch AsthoBin.                       |
+| **PORT**                          | 8080                                                        | The desired port to launch AsthoBin.                           |
+| **DATABASE_URL**                  | **Nothing (required, unless DATABASE_URL_FILE is present)** | The URL of your database.                                      |
+| **DATABASE_URL_FILE**             | **Nothing (required, unless DATABASE_URL is present)**      | Path to a file containing the URL of your database.            |
+| **CORS_ORIGIN**                   | *                                                           | CORS parameters.                                               |
+| **DELETE_TIME**                   | 604800                                                      | Time (in seconds) for storing a bin.                           |
+| **LOG_ON_ACCESS**                 | false                                                       | Display a log when a user access to a file.                    |
+| **LOG_ON_SAVE**                   | false                                                       | Display a log when a user creates a file.                      |
+| **RATELIMIT_BETWEEN_SAVE**        | 2                                                           | Number of seconds between each file save.                      |
+| **RATELIMIT_ALLOWED_BEFORE**      | 4                                                           | Number of requests before blocking.                            |
+| **POOL_MAX_CONNECTIONS**          | **Nothing (optionnal)**                                     | Maximum number of connections managed by the database pool.    |
+| **POOL_MIN_RESERVED_CONNECTIONS** | **Nothing (optionnal)**                                     | Minimum idle connection count maintained by the database pool. |
+| **POOL_CONNECTION_TIMEOUT**       | **Nothing (optionnal)**                                     | Connection timeout used by the database pool (in seconds).     |
+| **TZ**                            | System value                                                | The time zone of the logger, e.g: `Europe/Paris`.              |
 
 ## Development
 ### Before submit a PR

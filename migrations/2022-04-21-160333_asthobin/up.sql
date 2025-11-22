@@ -1,7 +1,7 @@
-CREATE TABLE `asthobin` (
-    `id` varchar(10) NOT NULL,
-    `content` longtext NOT NULL,
-    `time` bigint(20) NOT NULL,
-    PRIMARY KEY (`id`),
-    UNIQUE KEY `asthobin_id_uindex` (`id`)
+CREATE TABLE asthobin (
+    id TEXT NOT NULL,
+    content TEXT NOT NULL,
+    language TEXT NOT NULL,
+    time BIGINT NOT NULL CHECK (time >= 0),
+    CONSTRAINT asthobin_pk PRIMARY KEY (id)
 );

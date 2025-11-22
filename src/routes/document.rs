@@ -1,6 +1,6 @@
 use crate::api_error::ApiError;
 use crate::config::Config;
-use crate::database::mysql::MysqlPool;
+use crate::database::postgres::PgPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use crate::routes::AsthoBinTemplate;
 use crate::utils::syntect::highlight_string;
@@ -17,7 +17,7 @@ use syntect::highlighting::Theme;
 use syntect::parsing::SyntaxSet;
 
 pub async fn document(
-    ThinData(pool): ThinData<MysqlPool>,
+    ThinData(pool): ThinData<PgPool>,
     config: Data<Config>,
     syntect_theme: Data<Theme>,
     syntax_set: Data<SyntaxSet>,
