@@ -1,14 +1,19 @@
 services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: asthobin
+      POSTGRES_USER: asthobin
+      POSTGRES_PASSWORD: password
+
   asthobin:
     image: asthowen/asthobin:latest
     container_name: asthobin
     restart: always
-    network_mode: host
-    env_file: ../.env
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'
-          memory: 50M
-        reservations:
-          memory: 15M
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      HOST: 0.0.0.0
+      DATABASE_URL: postgres://asthobin:password@db:5432/asthobin
+      TZ: Europe/Paris

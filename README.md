@@ -44,12 +44,11 @@ git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
 
 After that, create a **PostgreSQL** database with the name you want, then edit `.env` config file, for this please refer to [configuration](#configuration).
 
-And finally, run Docker container (**do not forget to change the two ports, one for AsthoBin and the other for your SQL database**):
+And finally, run Docker container:
 ```bash
 docker run -d \
   --name=asthobin \
   -p 8080:8080 \
-  -p 3306:3306 \
   --restart unless-stopped \
   --env-file .env \
   asthowen/asthobin:latest
@@ -66,11 +65,6 @@ git clone https://github.com/Asthowen/AsthoBin.git && cd AsthoBin
 Now compile a release:
 ```bash
 cargo build --release
-```
-
-You can also enable https support by activating the `https-support` feature (enabled by default in the Docker image):
-```bash
-cargo build --release --features https-support
 ```
 
 Your executable will be in the `target/release/` folder, it is named `asthobin`.
