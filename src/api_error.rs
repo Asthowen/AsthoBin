@@ -21,10 +21,6 @@ pub enum ApiError {
     Askama(#[from] askama::Error),
     #[error("Configuration error: {0}")]
     Confik(#[from] confik::Error),
-    #[error("String parsing error: {0}")]
-    ParseStringError(#[from] std::string::FromUtf8Error),
-    #[error("SystemTimeError error: {0}")]
-    SystemTimeError(#[from] std::time::SystemTimeError),
     #[error("Conversion error: {0}")]
     Infallible(#[from] std::convert::Infallible),
     #[error("Integer conversion error: {0}")]

@@ -17,6 +17,9 @@ pub const IGNORED_DOCUMENTS: [&str; 5] = [
 
 pub fn get_unix_time() -> Result<i64, ApiError> {
     Ok(i64::try_from(
-        SystemTime::now().duration_since(UNIX_EPOCH)?.as_secs(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .map_err(|error| ApiError::new_log_internal(error.to_string()))?
+            .as_secs(),
     )?)
 }

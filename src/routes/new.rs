@@ -10,12 +10,13 @@ use actix_web::{HttpRequest, HttpResponse, web};
 use dashmap::DashMap;
 use diesel::ExpressionMethods;
 use diesel_async::RunQueryDsl;
-use rand::distr::{Alphanumeric, SampleString};
+use rand::Rng;
 use serde_json::json;
 use syntect::highlighting::Theme;
 use syntect::parsing::SyntaxSet;
 
 const DEFAULT_SYNTAX: &str = "Plain Text";
+const ALPHABET: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 pub async fn new(
     ThinData(pool): ThinData<PgPool>,
@@ -26,7 +27,7 @@ pub async fn new(
     bytes: web::Bytes,
     query: HttpRequest,
 ) -> Result<HttpResponse, ApiError> {
-    let document_content: String = String::from_utf8(bytes.to_vec())?;
+    let document_content: String = String::from_utf8_lossy(&bytes).to_string();
     if document_content.trim().is_empty() {
         return Err(ApiError::new_message(
             StatusCode::BAD_REQUEST,
@@ -46,7 +47,13 @@ pub async fn new(
         None => DEFAULT_SYNTAX,
     };
 
-    let random_url: String = Alphanumeric.sample_string(&mut rand::rng(), 10);
+    let random_url: String = (0..10)
+        .map(|_| {
+            let index = rand::rng().random_range(0..ALPHABET.len());
+            ALPHABET[index] as char
+        })
+        .collect();
+
     let time: i64 = get_unix_time()?;
     diesel::insert_into(asthobin_dsl::asthobin)
         .values((
