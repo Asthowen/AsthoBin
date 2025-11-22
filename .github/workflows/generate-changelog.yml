@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
@@ -23,6 +23,10 @@ jobs:
           git fetch --tags
           current_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')
           previous_tag=$(git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1` || echo '')
+          if [ -z "$previous_tag" ]; then
+            echo "No previous tags found (first release). Using first commit as previous_tag."
+            previous_tag=$(git rev-list --max-parents=0 HEAD)
+          fi
           echo "current_tag=$current_tag" >> $GITHUB_ENV
           echo "previous_tag=$previous_tag" >> $GITHUB_ENV
           echo "Previous Tag: $previous_tag"

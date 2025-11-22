@@ -10,14 +10,29 @@ jobs:
     name: Mirror GitHub repository to GitLab repository
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - name: Mirror to GitLab
-        uses: pixta-dev/repository-mirroring-action@v1
-        with:
-          target_repo_url:
-            git@gitlab.com:Asthowen/AsthoBin.git
-          ssh_private_key:
-            ${{ secrets.GITLAB_SSH_PRIVATE_KEY }}
+      - name: Configure git
+        run: |
+          git config user.name "git"
+          git remote add gitlab https://${{ secrets.GITLAB_REPOSITORY_USERNAME }}:${{ secrets.GITLAB_REPOSITORY_TOKEN }}@gitlab.com/Asthowen/AsthoBin.git
+
+      - name: Push branches to GitLab
+        run: |
+          git fetch --prune
+          git push gitlab --all
+
+      - name: Push new tags only
+        run: |
+          remote_tags=$(git ls-remote --tags gitlab | awk '{print $2}')
+          
+          for tag in $(git tag); do
+            if ! echo "$remote_tags" | grep -q "refs/tags/$tag"; then
+              git push gitlab "$tag"
+              echo "Pushed tag $tag!"
+            else
+              echo "Tag $tag already exists, skipping"
+            fi
+          done
