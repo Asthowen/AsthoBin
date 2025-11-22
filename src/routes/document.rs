@@ -1,24 +1,20 @@
 use crate::api_error::ApiError;
-use crate::config::Config;
 use crate::database::postgres::PgPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use crate::routes::AsthoBinTemplate;
 use crate::utils::syntect::highlight_string;
 use crate::utils::{IGNORED_DOCUMENTS, get_unix_time};
-use actix_web::dev::ConnectionInfo;
 use actix_web::web::{Data, ThinData};
 use actix_web::{HttpRequest, HttpResponse};
 use askama::Template;
 use dashmap::DashMap;
 use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
-use std::cell::Ref;
 use syntect::highlighting::Theme;
 use syntect::parsing::SyntaxSet;
 
 pub async fn document(
     ThinData(pool): ThinData<PgPool>,
-    config: Data<Config>,
     syntect_theme: Data<Theme>,
     syntax_set: Data<SyntaxSet>,
     formated_code_cache: Data<DashMap<String, (String, String, i64)>>,
@@ -67,17 +63,6 @@ pub async fn document(
         }
     };
 
-    if config.log_on_access {
-        let connection_info: Ref<ConnectionInfo> = query.connection_info();
-        let current_url: String = format!(
-            "{}://{}{}",
-            connection_info.scheme(),
-            connection_info.host(),
-            query.path()
-        );
-        let user_ip = connection_info.realip_remote_addr().unwrap_or("unknown");
-        log::info!("Access to the code present at: {current_url} - IP: {user_ip}.",);
-    }
     if is_raw {
         Ok(HttpResponse::Ok().content_type("text/plain").body(document))
     } else {

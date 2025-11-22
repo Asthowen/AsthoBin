@@ -1,12 +1,11 @@
 use crate::api_error::ApiError;
-use crate::config::Config;
 use crate::database::postgres::PgPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use crate::utils::get_unix_time;
 use crate::utils::syntect::highlight_string;
 use actix_web::http::StatusCode;
 use actix_web::web::{Data, ThinData};
-use actix_web::{HttpRequest, HttpResponse, web};
+use actix_web::{HttpMessage, HttpRequest, HttpResponse, web};
 use dashmap::DashMap;
 use diesel::ExpressionMethods;
 use diesel_async::RunQueryDsl;
@@ -19,8 +18,8 @@ const DEFAULT_SYNTAX: &str = "Plain Text";
 const ALPHABET: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 pub async fn new(
+    req: HttpRequest,
     ThinData(pool): ThinData<PgPool>,
-    config: Data<Config>,
     syntect_theme: Data<Theme>,
     syntax_set: Data<SyntaxSet>,
     formated_code_cache: Data<DashMap<String, (String, String, i64)>>,
@@ -53,6 +52,7 @@ pub async fn new(
             ALPHABET[index] as char
         })
         .collect();
+    req.extensions_mut().insert::<String>(random_url.clone());
 
     let time: i64 = get_unix_time()?;
     diesel::insert_into(asthobin_dsl::asthobin)
@@ -73,16 +73,6 @@ pub async fn new(
             time,
         ),
     );
-
-    if config.log_on_save {
-        let connection_info = query.connection_info();
-        let user_ip = connection_info.realip_remote_addr().unwrap_or("unknown");
-        log::info!(
-            "New code saved with ID: {} - IP: {user_ip} - Size: {}o.",
-            random_url,
-            document_content.len()
-        );
-    }
 
     Ok(HttpResponse::Ok()
         .append_header(("Location", format!("/{random_url}")))

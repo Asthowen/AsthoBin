@@ -1,9 +1,11 @@
 use crate::config::Config;
+use crate::middlewares::log;
 #[cfg(debug_assertions)]
 use actix_files::Files;
 use actix_files::NamedFile;
 use actix_governor::governor::middleware::NoOpMiddleware;
 use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyExtractor};
+use actix_web::middleware::from_fn;
 use actix_web::web::Data;
 use actix_web::{Responder, get, web};
 #[cfg(not(debug_assertions))]
@@ -58,10 +60,12 @@ pub fn setup(config: Data<Config>, service_config: &mut web::ServiceConfig) {
         .service(
             web::resource("/new")
                 .wrap(Governor::new(&governor_conf))
-                .route(web::post().to(new::new)),
+                .route(web::post().to(new::new))
+                .wrap(from_fn(log)),
         )
         .service(
             web::resource(["/{document_id}", "/raw/{raw_id}"])
-                .route(web::get().to(document::document)),
+                .route(web::get().to(document::document))
+                .wrap(from_fn(log)),
         );
 }
