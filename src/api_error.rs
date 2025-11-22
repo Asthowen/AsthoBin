@@ -76,11 +76,11 @@ impl From<RunError> for ApiError {
     }
 }
 
-impl From<rinja::Error> for ApiError {
-    fn from(error: rinja::Error) -> Self {
+impl From<askama::Error> for ApiError {
+    fn from(error: askama::Error) -> Self {
         Self::new_log(
             StatusCode::INTERNAL_SERVER_ERROR,
-            format!("A rinja error has occurred: {error}"),
+            format!("A askama error has occurred: {error}"),
         )
     }
 }
