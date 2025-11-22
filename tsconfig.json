@@ -17,5 +17,5 @@
     "allowJs": true,
     "baseUrl": "./",
   },
-  "include": ["frontend", "vite.config.mts", "tailwind.config.ts", "postcss.config.mts", "eslint.config.mts"]
+  "include": ["frontend", "vite.config.mts", "eslint.config.mts"]
 }

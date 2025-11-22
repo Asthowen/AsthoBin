@@ -2244,7 +2244,6 @@ version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f9c425c07353535ef55b45420f5a8b0a397cd9bc3d7e5236497ca0d90604aa9b"
 dependencies = [
- "change-detection",
  "mime_guess",
  "path-slash 0.1.5",
 ]

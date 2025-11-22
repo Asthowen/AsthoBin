@@ -11,7 +11,7 @@
     <title>AsthoBin</title>
 
     <link rel="icon" type="image/png" href="/assets/pictures/favicon.ico">
-    <link rel="stylesheet" href="/assets/css/index.css">
+    {{ crate::routes::generated_assets::ALL_CSS|safe }}
 </head>
 <body class="w-screen h-screen bg-dark-2 overflow-hidden">
 <div class="top-0 right-0 fixed flex justify-center items-center text-white mt-6 mr-6 p-2 space-x-4 cursor-pointer bg-dark-1 rounded">

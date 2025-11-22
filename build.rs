@@ -13,9 +13,8 @@ fn shell(command: &str) -> std::io::Result<()> {
         .output()
         .unwrap_or_else(|_| panic!("Failed to run {command}"));
 
-    let mut file = File::create("build-log.txt")?;
     writeln!(
-        file,
+        File::create("build-log.txt")?,
         "build log\nSTDOUT:\n{}\nSTDERR:\n{}",
         String::from_utf8_lossy(&output.stdout),
         String::from_utf8_lossy(&output.stderr)
@@ -25,14 +24,31 @@ fn shell(command: &str) -> std::io::Result<()> {
 }
 
 #[inline]
-fn add_assets_script_file(value: &str, file: &mut File, constant_name: &str) {
-    writeln!(file, "pub const {constant_name}_JS: &str = r#\"{value}\"#;").unwrap();
+fn add_assets_file(value: &str, file: &mut File, constant_name: &str, suffix: &str) {
+    writeln!(
+        file,
+        "pub const {constant_name}_{suffix}: &str = r#\"{value}\"#;"
+    )
+    .unwrap();
 }
 
-fn generate_scripts_values(scripts: Vec<String>) -> String {
+fn generate_scripts_values(scripts: Vec<String>, module: bool) -> String {
     scripts
         .iter()
-        .map(|script| format!(r#"<script type="module" src="{script}"></script>"#))
+        .map(|script| {
+            format!(
+                r#"<script{} src="{script}"></script>"#,
+                if module { r#" type="module""# } else { "" }
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+fn generate_styles_values(styles: Vec<String>) -> String {
+    styles
+        .iter()
+        .map(|style| format!(r#"<link rel="stylesheet" href="{style}">"#))
         .collect::<Vec<_>>()
         .join("\n")
 }
@@ -42,7 +58,7 @@ fn main() -> std::io::Result<()> {
     {
         shell("mkdir static/assets/css")?;
         shell("pnpm i")?;
-        shell("pnpm run prod")?;
+        shell("pnpm run build")?;
     }
 
     let out_dir = std::env::var("OUT_DIR").unwrap();
@@ -50,15 +66,23 @@ fn main() -> std::io::Result<()> {
 
     #[cfg(not(debug_assertions))]
     {
-        add_assets_script_file(
-            &generate_scripts_values(vec!["/assets/javascript/index.js".to_owned()]),
+        add_assets_file(
+            &generate_styles_values(vec!["/assets/css/index.css".to_owned()]),
+            &mut file,
+            "ALL",
+            "CSS",
+        );
+        add_assets_file(
+            &generate_scripts_values(vec!["/assets/javascript/index.js".to_owned()], false),
             &mut file,
             "INDEX",
+            "JS",
         );
-        add_assets_script_file(
-            &generate_scripts_values(vec!["/assets/javascript/code.js".to_owned()]),
+        add_assets_file(
+            &generate_scripts_values(vec!["/assets/javascript/code.js".to_owned()], false),
             &mut file,
             "CODE",
+            "JS",
         );
     }
 
@@ -67,21 +91,27 @@ fn main() -> std::io::Result<()> {
         dotenvy::dotenv().ok();
 
         let vite_dev_url = std::env::var("VITE_DEV_URL").unwrap();
-        add_assets_script_file(
-            &generate_scripts_values(vec![
-                format!("{vite_dev_url}/@vite/client"),
-                format!("{vite_dev_url}/index.ts"),
-            ]),
+        add_assets_file(
+            &format!(
+                "{}\n    {}",
+                generate_scripts_values(vec![format!("{vite_dev_url}/@vite/client"),], true),
+                generate_styles_values(vec![format!("{vite_dev_url}/css/index.css"),])
+            ),
+            &mut file,
+            "ALL",
+            "CSS",
+        );
+        add_assets_file(
+            &generate_scripts_values(vec![format!("{vite_dev_url}/ts/index.ts")], true),
             &mut file,
             "INDEX",
+            "JS",
         );
-        add_assets_script_file(
-            &generate_scripts_values(vec![
-                format!("{vite_dev_url}/@vite/client"),
-                format!("{vite_dev_url}/code.ts"),
-            ]),
+        add_assets_file(
+            &generate_scripts_values(vec![format!("{vite_dev_url}/ts/code.ts")], true),
             &mut file,
             "CODE",
+            "JS",
         );
     }
 

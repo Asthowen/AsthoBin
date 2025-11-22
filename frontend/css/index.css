@@ -1,6 +1,12 @@
-@tailwind components;
-@tailwind utilities;
-@tailwind base;
+@theme {
+    --color-dark-1: #303030;
+    --color-dark-2: #202020;
+}
+
+@import "tailwindcss" source(none);
+
+@source "../templates/*.html";
+@source "../ts/*.ts";
 
 @font-face {
     font-family: 'Cascadia Code';

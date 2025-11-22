@@ -14,19 +14,13 @@ export default [
       "docker/**",
       ".github/**",
     ],
-    files: [
-      "frontend/ts/*.ts",
-      "vite.config.mts",
-      "tailwind.config.ts",
-      "postcss.config.mts",
-      "eslint.config.mts",
-    ],
+    files: ["frontend/ts/*.ts", "vite.config.mts", "eslint.config.mts"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
       parser: typescriptParser,
       parserOptions: {
-        project: "./tsconfig.json",
+        project: "tsconfig.json",
       },
     },
     plugins: {
