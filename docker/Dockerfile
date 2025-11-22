@@ -7,7 +7,7 @@ LABEL version="0.0.2" maintainer="Asthowen<contact@asthowen.fr>"
 WORKDIR "/asthobin"
 
 RUN apk update && apk upgrade && \
-    apk add --no-cache nodejs npm build-base cmake libssl-dev libpq-dev \
+    apk add --no-cache nodejs npm build-base cmake openssl-dev libpq-dev \
     && npm install -g pnpm
 
 COPY . .
