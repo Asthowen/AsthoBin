@@ -49,7 +49,6 @@ And finally, run Docker container (**do not forget to change the two ports, one 
 docker run -d \
   --name=asthobin \
   -p 8080:8080 \
-  -p 3306:3306 \
   --restart unless-stopped \
   --env-file .env \
   asthowen/asthobin:latest
@@ -68,11 +67,6 @@ Now compile a release:
 cargo build --release
 ```
 
-You can also enable https support by activating the `https-support` feature (enabled by default in the Docker image):
-```bash
-cargo build --release --features https-support
-```
-
 Your executable will be in the `target/release/` folder, it is named `asthobin`.
 
 ## Configuration
@@ -80,30 +74,23 @@ To configure **AsthoBin**, just use the example configuration: [`.env.example`](
 
 ### List of variables
 
-| Key                             | Default                | Description                                                            |
-|:--------------------------------|:-----------------------|:-----------------------------------------------------------------------|
-| **HOST**                        | 127.0.0.1              | The desired hostname to launch AsthoBin.                               |
-| **PORT**                        | 8080                   | The desired port to launch AsthoBin.                                   |
-| **DATABASE_URL**                | **Nothing (required)** | The URL of your database.                                              |
-| **CORS_ORIGIN**                 | *                      | CORS parameters.                                                       |
-| **LOG_ON_ACCESS**               | false                  | Display a log when a user access to a file.                            |
-| **LOG_ON_SAVE**                 | false                  | Display a log when a user creates a file.                              |
-| **RATELIMIT_BETWEEN_SAVE**      | 2                      | Number of seconds between each file save.                              |
-| **RATELIMIT_ALLOWED_BEFORE**    | 4                      | Number of requests before blocking.                                    |
-| **ACTIX_WORKER_THREADS_NUMBER** | 4                      | The number of threads used by Actix.                                   |
-| **TZ**                          | System value           | The time zone of the logger, e.g: `Europe/Paris`.                      |
-| **HTTP_PRIVATE_KEY**            | **Nothing (optional)** | The file path of SSL certificate private key.                          |
-| **HTTP_CERTIFICATE_CHAIN**      | **Nothing (optional)** | The file path of SSL certificate chain.                                |
-| **TLS_VERSIONS**                | **Nothing (optional)** | List of supported TLS protocols (tls1.2/tls1.3), e.g: `tls1.2,tls1.3`. |
+| Key                          | Default                                                     | Description                                         |
+|:-----------------------------|:------------------------------------------------------------|:----------------------------------------------------|
+| **HOST**                     | 127.0.0.1                                                   | The desired hostname to launch AsthoBin.            |
+| **PORT**                     | 8080                                                        | The desired port to launch AsthoBin.                |
+| **DATABASE_URL**             | **Nothing (required, unless DATABASE_URL_FILE is present)** | The URL of your database.                           |
+| **DATABASE_URL_FILE**        | **Nothing (required, unless DATABASE_URL is present)**      | Path to a file containing the URL of your database. |
+| **CORS_ORIGIN**              | *                                                           | CORS parameters.                                    |
+| **DELETE_TIME**              | 604800                                                      | Time (in seconds) for storing a bin.                |
+| **LOG_ON_ACCESS**            | false                                                       | Display a log when a user access to a file.         |
+| **LOG_ON_SAVE**              | false                                                       | Display a log when a user creates a file.           |
+| **RATELIMIT_BETWEEN_SAVE**   | 2                                                           | Number of seconds between each file save.           |
+| **RATELIMIT_ALLOWED_BEFORE** | 4                                                           | Number of requests before blocking.                 |
+| **TZ**                       | System value                                                | The time zone of the logger, e.g: `Europe/Paris`.   |
 
 ## Development
 ### Before submit a PR
 **You must make sure that clippy (`cargo clippy`) does not return any errors/warning. You must also run `cargo fmt`.**
-
-### Create a testing certificate
-```shell
-openssl req -x509 -newkey rsa:4096 -nodes -keyout key.pem -out cert.pem -days 365 -subj '/CN=127.0.0.1'
-```
 
 ### Versioning
 **This project uses semantic versioning, which has the format: MAJOR.MINOR.PATCH with:**

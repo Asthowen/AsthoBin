@@ -3,8 +3,6 @@ static/assets/css
 pnpm-lock.yaml
 node_modules/
 build-log.txt
-cert.pem
 target/
-key.pem
 .idea/
 .env

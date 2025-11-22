@@ -1,8 +1,9 @@
 use crate::api_error::ApiError;
+use crate::config::Config;
 use crate::database::mysql::MysqlPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
+use crate::utils::get_unix_time;
 use crate::utils::syntect::highlight_string;
-use crate::utils::{get_unix_time, parse_env_or_default};
 use actix_web::http::StatusCode;
 use actix_web::web::{Data, ThinData};
 use actix_web::{HttpRequest, HttpResponse, web};
@@ -18,6 +19,7 @@ const DEFAULT_SYNTAX: &str = "Plain Text";
 
 pub async fn new(
     ThinData(pool): ThinData<MysqlPool>,
+    config: Data<Config>,
     syntect_theme: Data<Theme>,
     syntax_set: Data<SyntaxSet>,
     formated_code_cache: Data<DashMap<String, (String, String, i64)>>,
@@ -65,8 +67,7 @@ pub async fn new(
         ),
     );
 
-    let log_on_save: bool = parse_env_or_default("LOG_ON_SAVE", false);
-    if log_on_save {
+    if config.log_on_save {
         let connection_info = query.connection_info();
         let user_ip = connection_info.realip_remote_addr().unwrap_or("unknown");
         log::info!(

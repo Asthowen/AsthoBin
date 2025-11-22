@@ -22,9 +22,8 @@ dotenvy = "0.15.7"
 [dependencies]
 actix-web-static-files = { version = "4.1.1", default-features = false, features = ["static-files-03"] }
 diesel-async = { version = "0.7.4", features = ["mysql", "bb8", "async-connection-wrapper"] }
-tokio = { version = "1.48.0", default-features = false, features = ["rt-multi-thread"] }
-rustls-pemfile = { version = "2.2.0", optional = true }
-rustls = { version = "0.23.35", optional = true }
+confik = { version = "0.15.1", default-features = false, features = ["env"] }
+tokio = { version = "1.48.0", default-features = false, features = ["fs"] }
 diesel_migrations = "2.3.0"
 actix-governor = "0.10.0"
 static-files = "0.3.1"
@@ -35,6 +34,7 @@ actix-cors = "0.7.1"
 actix-web = "4.12.0"
 dotenvy = "0.15.7"
 chrono = "0.4.42"
+thiserror = "2.0.17"
 syntect = "5.3.0"
 serde = "1.0.228"
 dashmap = "6.1.0"
@@ -42,7 +42,3 @@ askama = "0.14.0"
 diesel = "2.3.3"
 log = "0.4.28"
 rand = "0.9.2"
-
-[features]
-default = []
-https-support = ["actix-web/rustls-0_23", "rustls", "rustls-pemfile"]

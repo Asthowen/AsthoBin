@@ -1,36 +1,47 @@
 use actix_web::http::StatusCode;
 use actix_web::{HttpResponse, ResponseError};
-use diesel::result::Error as DieselError;
-use diesel_async::pooled_connection::bb8::RunError;
 use serde_json::json;
-use std::convert::Infallible;
-use std::fmt;
-use std::num::TryFromIntError;
-use std::string::FromUtf8Error;
-use std::time::SystemTimeError;
+use thiserror::Error;
 
-#[derive(Debug)]
-pub struct ApiError {
-    pub status_code: StatusCode,
-    pub log_message: Option<String>,
-    pub http_message: Option<String>,
-}
-
-impl ApiError {
-    pub const fn new(
+#[derive(Error, Debug)]
+pub enum ApiError {
+    #[error("I/O error: {0}")]
+    Io(#[from] std::io::Error),
+    #[error("Syntect error: {0}")]
+    Syntect(#[from] syntect::Error),
+    #[error("Serde error: {0}")]
+    Serde(#[from] serde_json::Error),
+    #[error("Diesel error: {0}")]
+    Diesel(#[from] diesel::result::Error),
+    #[error("bb8 error: {0}")]
+    Bb8(#[from] diesel_async::pooled_connection::bb8::RunError),
+    #[error("Askama error: {0}")]
+    Askama(#[from] askama::Error),
+    #[error("Configuration error: {0}")]
+    Confik(#[from] confik::Error),
+    #[error("String parsing error: {0}")]
+    ParseStringError(#[from] std::string::FromUtf8Error),
+    #[error("SystemTimeError error: {0}")]
+    SystemTimeError(#[from] std::time::SystemTimeError),
+    #[error("Conversion error: {0}")]
+    Infallible(#[from] std::convert::Infallible),
+    #[error("Integer conversion error: {0}")]
+    TryFromIntError(#[from] std::num::TryFromIntError),
+    #[error("Custom error: {log_message:?} (code: {status_code})")]
+    Custom {
         status_code: StatusCode,
         log_message: Option<String>,
         http_message: Option<String>,
-    ) -> Self {
-        Self {
-            status_code,
-            log_message,
-            http_message,
-        }
+    },
+}
+
+impl ApiError {
+    pub fn new_log_internal<S: Into<String>>(log_message: S) -> Self {
+        Self::new_log(StatusCode::INTERNAL_SERVER_ERROR, log_message)
     }
 
     pub fn new_log<S: Into<String>>(status_code: StatusCode, log_message: S) -> Self {
-        Self {
+        Self::Custom {
             status_code,
             log_message: Some(log_message.into()),
             http_message: None,
@@ -38,109 +49,50 @@ impl ApiError {
     }
 
     pub fn new_message<S: Into<String>>(status_code: StatusCode, http_message: S) -> Self {
-        Self {
+        Self::Custom {
             status_code,
             log_message: None,
             http_message: Some(http_message.into()),
         }
     }
-}
 
-impl fmt::Display for ApiError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        if let Some(log_message) = &self.log_message {
-            f.write_str(log_message)
-        } else if let Some(http_message) = &self.http_message {
-            f.write_str(http_message)
-        } else {
-            f.write_str("No error message.")
+    pub fn new_all<S1: Into<String>, S2: Into<String>>(
+        status_code: StatusCode,
+        log_message: S1,
+        http_message: S2,
+    ) -> Self {
+        Self::Custom {
+            status_code,
+            log_message: Some(log_message.into()),
+            http_message: Some(http_message.into()),
         }
-    }
-}
-
-impl From<DieselError> for ApiError {
-    fn from(error: DieselError) -> Self {
-        Self::new_log(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("A diesel error has occurred: {error}"),
-        )
-    }
-}
-
-impl From<RunError> for ApiError {
-    fn from(error: RunError) -> Self {
-        Self::new_log(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("A bb8 (pool) error has occurred: {error}"),
-        )
-    }
-}
-
-impl From<askama::Error> for ApiError {
-    fn from(error: askama::Error) -> Self {
-        Self::new_log(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("A askama error has occurred: {error}"),
-        )
-    }
-}
-
-impl From<FromUtf8Error> for ApiError {
-    fn from(_: FromUtf8Error) -> Self {
-        Self::new_message(
-            StatusCode::BAD_REQUEST,
-            "Text cannot be converted to UTF-8.",
-        )
-    }
-}
-
-impl From<TryFromIntError> for ApiError {
-    fn from(error: TryFromIntError) -> Self {
-        Self::new_message(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("An error has occurred when try convert an integer: {error}",),
-        )
-    }
-}
-
-impl From<Infallible> for ApiError {
-    fn from(error: Infallible) -> Self {
-        Self::new_log(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("An 'Infallible' error has occurred: {error}"),
-        )
-    }
-}
-
-impl From<SystemTimeError> for ApiError {
-    fn from(error: SystemTimeError) -> Self {
-        Self::new_log(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("An 'SystemTimeError' error has occurred: {error}"),
-        )
-    }
-}
-
-impl From<syntect::Error> for ApiError {
-    fn from(error: syntect::Error) -> Self {
-        Self::new_log(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            format!("An 'syntect' error has occurred: {error}"),
-        )
     }
 }
 
 impl ResponseError for ApiError {
     fn error_response(&self) -> HttpResponse {
-        if let Some(log_message) = &self.log_message {
+        let (status_code, log_message, http_message) = match self {
+            Self::Custom {
+                status_code,
+                log_message,
+                http_message,
+            } => (*status_code, log_message.clone(), http_message.clone()),
+            _ => (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Some(self.to_string()),
+                None,
+            ),
+        };
+
+        if let Some(log_message) = &log_message {
             log::error!("{log_message}");
         }
 
-        if let Some(http_message) = &self.http_message {
-            HttpResponse::build(self.status_code)
+        if let Some(http_message) = &http_message {
+            HttpResponse::build(status_code)
                 .json(json!({"status": "failed", "message": http_message}))
         } else {
-            HttpResponse::build(self.status_code).finish()
+            HttpResponse::build(status_code).finish()
         }
     }
 }

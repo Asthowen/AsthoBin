@@ -1,9 +1,10 @@
-use crate::utils::parse_env_or_default;
+use crate::config::Config;
 #[cfg(debug_assertions)]
 use actix_files::Files;
 use actix_files::NamedFile;
 use actix_governor::governor::middleware::NoOpMiddleware;
 use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyExtractor};
+use actix_web::web::Data;
 use actix_web::{Responder, get, web};
 #[cfg(not(debug_assertions))]
 use actix_web_static_files::ResourceFiles;
@@ -34,11 +35,11 @@ async fn favicon() -> actix_web::Result<impl Responder> {
     Ok(NamedFile::open("static/assets/pictures/favicon.png")?)
 }
 
-pub fn setup(config: &mut web::ServiceConfig) {
+pub fn setup(config: Data<Config>, service_config: &mut web::ServiceConfig) {
     let governor_conf: GovernorConfig<PeerIpKeyExtractor, NoOpMiddleware> =
         GovernorConfigBuilder::default()
-            .seconds_per_request(parse_env_or_default("RATELIMIT_BETWEEN_SAVE", 2))
-            .burst_size(parse_env_or_default("RATELIMIT_ALLOWED_BEFORE", 4))
+            .seconds_per_request(config.ratelimit_between_save)
+            .burst_size(config.ratelimit_allowed_before)
             .finish()
             .unwrap_or_else(|| {
                 log::error!("Invalid Governor configuration.");
@@ -46,12 +47,12 @@ pub fn setup(config: &mut web::ServiceConfig) {
             });
 
     #[cfg(not(debug_assertions))]
-    config.service(web::scope("/assets").service(ResourceFiles::new("", generate())));
+    service_config.service(web::scope("/assets").service(ResourceFiles::new("", generate())));
 
     #[cfg(debug_assertions)]
-    config.service(web::scope("/assets").service(Files::new("", "static/assets/")));
+    service_config.service(web::scope("/assets").service(Files::new("", "static/assets/")));
 
-    config
+    service_config
         .service(favicon)
         .service(web::resource("/").route(web::get().to(index::index)))
         .service(

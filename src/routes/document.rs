@@ -1,9 +1,10 @@
 use crate::api_error::ApiError;
+use crate::config::Config;
 use crate::database::mysql::MysqlPool;
 use crate::database::schema::asthobin::dsl as asthobin_dsl;
 use crate::routes::AsthoBinTemplate;
 use crate::utils::syntect::highlight_string;
-use crate::utils::{IGNORED_DOCUMENTS, get_unix_time, parse_env_or_default};
+use crate::utils::{IGNORED_DOCUMENTS, get_unix_time};
 use actix_web::dev::ConnectionInfo;
 use actix_web::web::{Data, ThinData};
 use actix_web::{HttpRequest, HttpResponse};
@@ -17,6 +18,7 @@ use syntect::parsing::SyntaxSet;
 
 pub async fn document(
     ThinData(pool): ThinData<MysqlPool>,
+    config: Data<Config>,
     syntect_theme: Data<Theme>,
     syntax_set: Data<SyntaxSet>,
     formated_code_cache: Data<DashMap<String, (String, String, i64)>>,
@@ -65,8 +67,7 @@ pub async fn document(
         }
     };
 
-    let log_on_access: bool = parse_env_or_default("LOG_ON_ACCESS", false);
-    if log_on_access {
+    if config.log_on_access {
         let connection_info: Ref<ConnectionInfo> = query.connection_info();
         let current_url: String = format!(
             "{}://{}{}",

@@ -1,4 +1,4 @@
-use crate::utils::{WAIT_TWO_SECONDS, get_key};
+use crate::utils::WAIT_TWO_SECONDS;
 use diesel::prelude::*;
 use diesel_async::AsyncMysqlConnection;
 use diesel_async::async_connection_wrapper::AsyncConnectionWrapper;
@@ -11,9 +11,8 @@ pub type MysqlPooled<'a> = PooledConnection<'a, AsyncDieselConnectionManager<Asy
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!();
 
-pub async fn get_pool() -> MysqlPool {
-    let manager =
-        AsyncDieselConnectionManager::<AsyncMysqlConnection>::new(get_key("DATABASE_URL"));
+pub async fn get_pool(database_url: &str) -> MysqlPool {
+    let manager = AsyncDieselConnectionManager::<AsyncMysqlConnection>::new(database_url);
 
     Pool::builder()
         .connection_timeout(WAIT_TWO_SECONDS)
@@ -25,14 +24,13 @@ pub async fn get_pool() -> MysqlPool {
         })
 }
 
-pub async fn run_migration() {
+pub async fn run_migration(database_url: String) {
     tokio::task::spawn_blocking(move || {
-        let mut conn =
-            AsyncConnectionWrapper::<AsyncMysqlConnection>::establish(&get_key("DATABASE_URL"))
-                .unwrap_or_else(|error| {
-                    log::error!("Error when connecting to database to deploy migrations: {error}");
-                    std::process::exit(1);
-                });
+        let mut conn = AsyncConnectionWrapper::<AsyncMysqlConnection>::establish(&database_url)
+            .unwrap_or_else(|error| {
+                log::error!("Error when connecting to database to deploy migrations: {error}");
+                std::process::exit(1);
+            });
         conn.run_pending_migrations(MIGRATIONS)
             .unwrap_or_else(|error| {
                 log::error!("Error when deploying migrations: {error}");
