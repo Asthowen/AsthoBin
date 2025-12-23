@@ -25,7 +25,7 @@
 * Lightweight < 5MB
 * Low RAM consumption
 * Responsive UI
-* Code coloring with [highlight.js](https://highlightjs.org/)
+* Code coloring with [syntect](https://github.com/trishume/syntect)
 * Automatic deletion after custom time
 * Recovery of files raws
 
