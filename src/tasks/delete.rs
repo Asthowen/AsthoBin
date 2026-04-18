@@ -1,17 +1,18 @@
-use crate::api_error::ApiError;
-use crate::config::Config;
-use crate::database::postgres::PgPool;
-use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::utils::get_unix_time;
 use actix_web::web::Data;
 use diesel::ExpressionMethods;
 use diesel_async::RunQueryDsl;
 
-pub async fn delete(pool: &PgPool, config: &Data<Config>) -> Result<(), ApiError> {
-    let current_time: i64 = get_unix_time()?;
+use crate::api_error::ApiError;
+use crate::config::Config;
+use crate::database::postgres::PgPool;
+use crate::database::schema::asthobin;
+use crate::utils::unix_timestamp;
 
-    diesel::delete(asthobin_dsl::asthobin)
-        .filter(asthobin_dsl::time.lt(current_time - config.delete_time))
+pub async fn delete(pool: &PgPool, config: &Data<Config>) -> Result<(), ApiError> {
+    let current_time: i64 = unix_timestamp()?;
+
+    diesel::delete(asthobin::table)
+        .filter(asthobin::time.lt(current_time - config.delete_time))
         .execute(&mut pool.get().await?)
         .await?;
 

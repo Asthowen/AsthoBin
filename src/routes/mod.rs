@@ -1,28 +1,25 @@
-use crate::config::Config;
-use crate::middlewares::log;
-#[cfg(debug_assertions)]
-use actix_files::Files;
+pub mod document;
+pub mod index;
+pub mod new;
+pub mod generated_assets {
+    include!(concat!(env!("OUT_DIR"), "/generated_assets.rs"));
+}
+
+use std::fmt::Arguments;
+
 use actix_files::NamedFile;
 use actix_governor::governor::middleware::NoOpMiddleware;
 use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyExtractor};
 use actix_web::middleware::from_fn;
 use actix_web::web::Data;
 use actix_web::{Responder, get, web};
-#[cfg(not(debug_assertions))]
-use actix_web_static_files::ResourceFiles;
 use askama::Template;
-use std::fmt::Arguments;
 
-pub mod document;
-pub mod index;
-pub mod new;
+use crate::config::Config;
+use crate::middlewares::log;
 
 #[cfg(not(debug_assertions))]
 include!(concat!(env!("OUT_DIR"), "/generated.rs"));
-
-pub mod generated_assets {
-    include!(concat!(env!("OUT_DIR"), "/generated_assets.rs"));
-}
 
 #[derive(Default, Template)]
 #[template(path = "index.html")]
@@ -49,10 +46,13 @@ pub fn setup(config: Data<Config>, service_config: &mut web::ServiceConfig) {
             });
 
     #[cfg(not(debug_assertions))]
-    service_config.service(web::scope("/assets").service(ResourceFiles::new("", generate())));
+    service_config.service(
+        web::scope("/assets").service(actix_web_static_files::ResourceFiles::new("", generate())),
+    );
 
     #[cfg(debug_assertions)]
-    service_config.service(web::scope("/assets").service(Files::new("", "static/assets/")));
+    service_config
+        .service(web::scope("/assets").service(actix_files::Files::new("", "static/assets/")));
 
     service_config
         .service(favicon)

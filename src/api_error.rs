@@ -3,7 +3,7 @@ use actix_web::{HttpResponse, ResponseError};
 use serde_json::json;
 use thiserror::Error;
 
-#[derive(Error, Debug)]
+#[derive(Debug, Error)]
 pub enum ApiError {
     #[error("I/O error: {0}")]
     Io(#[from] std::io::Error),

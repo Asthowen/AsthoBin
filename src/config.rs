@@ -15,7 +15,7 @@ pub struct Config {
     pub log_on_access: bool,
     #[confik(default = false)]
     pub log_on_save: bool,
-    #[confik(default = 604800)]
+    #[confik(default = 604_800)]
     pub delete_time: i64,
     #[confik(default = 2u64)]
     pub ratelimit_between_save: u64,

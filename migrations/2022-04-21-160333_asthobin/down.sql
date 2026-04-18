@@ -1,1 +1,1 @@
-DROP TABLE `asthobin`;
+DROP TABLE asthobin;

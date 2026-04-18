@@ -1,19 +1,20 @@
+use std::path::Path;
+
 use actix_cors::Cors;
+use actix_web::http::StatusCode;
 use actix_web::web::{Data, ThinData};
-use actix_web::{App, HttpResponse, HttpServer, web};
-use asthobin::api_error::ApiError;
-use asthobin::config::Config;
-use asthobin::database::postgres;
-use asthobin::database::postgres::PgPool;
-use asthobin::routes::setup;
-use asthobin::tasks::delete;
-use asthobin::utils::WAIT_ONE_HOUR;
-use asthobin::utils::{get_unix_time, logger};
+use actix_web::{App, HttpResponse, HttpServer};
 use confik::{Configuration, EnvSource};
 use dashmap::DashMap;
-use std::path::Path;
 use syntect::highlighting::{Color, ThemeSet};
 use syntect::parsing::SyntaxSet;
+
+use asthobin::api_error::ApiError;
+use asthobin::config::Config;
+use asthobin::database::postgres::{self, PgPool};
+use asthobin::routes::setup;
+use asthobin::tasks::delete;
+use asthobin::utils::{WAIT_ONE_HOUR, logger, unix_timestamp};
 
 #[tokio::main(flavor = "multi_thread")]
 async fn main() -> std::io::Result<()> {
@@ -74,9 +75,11 @@ async fn start() -> Result<(), ApiError> {
     let formated_code_cache: Data<DashMap<String, (String, String, i64)>> =
         Data::new(DashMap::new());
 
-    postgres::run_migration(&config.database_url).await?;
+    postgres::run_migrations(config.database_url.clone())
+        .await
+        .map_err(|error| ApiError::new_log(StatusCode::INTERNAL_SERVER_ERROR, error.to_string()))?;
 
-    let pool: PgPool = postgres::get_pool(&config).await?;
+    let pool: PgPool = postgres::pool(&config).await?;
 
     let pool_clone: PgPool = pool.clone();
     let config_clone = Data::clone(&config);
@@ -87,7 +90,7 @@ async fn start() -> Result<(), ApiError> {
                 log::error!("An error has occurred while executing the deletion task: {error}");
             }
 
-            if let Ok(unix_time) = get_unix_time() {
+            if let Ok(unix_time) = unix_timestamp() {
                 formated_code_cache_clone.retain(|_, (_, _, ttl)| *ttl + 3600 > unix_time);
             }
 
@@ -135,7 +138,7 @@ async fn start() -> Result<(), ApiError> {
             .app_data(Data::clone(&theme_data))
             .app_data(Data::clone(&syntax_set))
             .app_data(Data::clone(&formated_code_cache))
-            .default_service(web::to(HttpResponse::Ok))
+            .default_service(actix_web::web::to(HttpResponse::Ok))
             .configure(|service_config| setup(Data::clone(&config), service_config))
             .wrap(cors)
     })

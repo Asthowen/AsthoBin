@@ -1,29 +1,34 @@
-use crate::api_error::ApiError;
-use crate::database::postgres::PgPool;
-use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::routes::AsthoBinTemplate;
-use crate::utils::syntect::highlight_string;
-use crate::utils::{IGNORED_DOCUMENTS, get_unix_time};
-use actix_web::web::{Data, ThinData};
-use actix_web::{HttpRequest, HttpResponse};
+use actix_web::HttpResponse;
+use actix_web::web::{Data, Path, ThinData};
 use askama::Template;
 use dashmap::DashMap;
 use diesel::prelude::*;
 use diesel_async::RunQueryDsl;
+use serde::Deserialize;
 use syntect::highlighting::Theme;
 use syntect::parsing::SyntaxSet;
 
+use super::AsthoBinTemplate;
+use crate::api_error::ApiError;
+use crate::database::postgres::PgPool;
+use crate::database::schema::asthobin;
+use crate::utils::syntect::highlight_string;
+use crate::utils::{IGNORED_DOCUMENTS, unix_timestamp};
+
+#[derive(Deserialize)]
+pub struct PathDocument {
+    pub document_id: Option<String>,
+    pub raw_id: Option<String>,
+}
+
 pub async fn document(
+    path: Path<PathDocument>,
     ThinData(pool): ThinData<PgPool>,
-    syntect_theme: Data<Theme>,
-    syntax_set: Data<SyntaxSet>,
     formated_code_cache: Data<DashMap<String, (String, String, i64)>>,
-    query: HttpRequest,
+    syntax_set: Data<SyntaxSet>,
+    syntect_theme: Data<Theme>,
 ) -> Result<HttpResponse, ApiError> {
-    let (is_raw, id): (bool, &str) = match (
-        query.match_info().get("document_id"),
-        query.match_info().get("raw_id"),
-    ) {
+    let (is_raw, id): (bool, &str) = match (&path.document_id, &path.raw_id) {
         (Some(document_id), None) => (false, document_id),
         (None, Some(raw_id)) => (true, raw_id),
         _ => return Ok(HttpResponse::BadRequest().finish()),
@@ -34,12 +39,12 @@ pub async fn document(
     }
 
     let (document, language) = if !is_raw && let Some(element) = formated_code_cache.get(id) {
-        let value = element.value();
-        (value.0.clone(), value.1.clone())
+        let (document, language, _) = element.value();
+        (document.clone(), language.clone())
     } else {
-        let Some((content, language)) = asthobin_dsl::asthobin
-            .select((asthobin_dsl::content, asthobin_dsl::language))
-            .filter(asthobin_dsl::id.eq(&id))
+        let Some((content, language)) = asthobin::table
+            .select((asthobin::content, asthobin::language))
+            .filter(asthobin::id.eq(&id))
             .first::<(String, String)>(&mut pool.get().await?)
             .await
             .optional()?
@@ -56,7 +61,7 @@ pub async fn document(
 
             formated_code_cache.insert(
                 id.to_owned(),
-                (document.clone(), language.clone(), get_unix_time()?),
+                (document.clone(), language.clone(), unix_timestamp()?),
             );
 
             (document, language)

@@ -1,5 +1,6 @@
-use env_logger::{Builder, Env};
 use std::io::Write;
+
+use env_logger::{Builder, Env};
 
 pub fn init() {
     let env: Env =

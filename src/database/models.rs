@@ -1,8 +1,9 @@
-use crate::database::schema::asthobin;
 use diesel::{Insertable, Queryable};
 use serde::Deserialize;
 
-#[derive(Debug, Clone, Insertable, Deserialize, Queryable)]
+use super::schema::asthobin;
+
+#[derive(Clone, Debug, Deserialize, Insertable, Queryable)]
 #[diesel(table_name = asthobin)]
 pub struct AsthoBin {
     pub id: String,

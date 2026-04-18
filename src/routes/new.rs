@@ -1,30 +1,30 @@
-use crate::api_error::ApiError;
-use crate::database::postgres::PgPool;
-use crate::database::schema::asthobin::dsl as asthobin_dsl;
-use crate::utils::get_unix_time;
-use crate::utils::syntect::highlight_string;
 use actix_web::http::StatusCode;
-use actix_web::web::{Data, ThinData};
-use actix_web::{HttpMessage, HttpRequest, HttpResponse, web};
+use actix_web::web::{Bytes, Data, ThinData};
+use actix_web::{HttpMessage, HttpRequest, HttpResponse};
 use dashmap::DashMap;
 use diesel::ExpressionMethods;
 use diesel_async::RunQueryDsl;
-use rand::Rng;
+use rand::RngExt;
 use serde_json::json;
 use syntect::highlighting::Theme;
 use syntect::parsing::SyntaxSet;
+
+use crate::api_error::ApiError;
+use crate::database::postgres::PgPool;
+use crate::database::schema::asthobin;
+use crate::utils::syntect::highlight_string;
+use crate::utils::unix_timestamp;
 
 const DEFAULT_SYNTAX: &str = "Plain Text";
 const ALPHABET: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 pub async fn new(
-    req: HttpRequest,
+    query: HttpRequest,
     ThinData(pool): ThinData<PgPool>,
     syntect_theme: Data<Theme>,
     syntax_set: Data<SyntaxSet>,
     formated_code_cache: Data<DashMap<String, (String, String, i64)>>,
-    bytes: web::Bytes,
-    query: HttpRequest,
+    bytes: Bytes,
 ) -> Result<HttpResponse, ApiError> {
     let document_content: String = String::from_utf8_lossy(&bytes).to_string();
     if document_content.trim().is_empty() {
@@ -52,15 +52,15 @@ pub async fn new(
             ALPHABET[index] as char
         })
         .collect();
-    req.extensions_mut().insert::<String>(random_url.clone());
+    query.extensions_mut().insert::<String>(random_url.clone());
 
-    let time: i64 = get_unix_time()?;
-    diesel::insert_into(asthobin_dsl::asthobin)
+    let time: i64 = unix_timestamp()?;
+    diesel::insert_into(asthobin::table)
         .values((
-            asthobin_dsl::id.eq(&random_url),
-            asthobin_dsl::content.eq(&document_content),
-            asthobin_dsl::language.eq(&language),
-            asthobin_dsl::time.eq(&time),
+            asthobin::id.eq(&random_url),
+            asthobin::content.eq(&document_content),
+            asthobin::language.eq(&language),
+            asthobin::time.eq(&time),
         ))
         .execute(&mut pool.get().await?)
         .await?;

@@ -1,8 +1,9 @@
-use crate::api_error::ApiError;
 use actix_web::web::Data;
 use syntect::highlighting::Theme;
 use syntect::html::highlighted_html_for_string;
 use syntect::parsing::SyntaxSet;
+
+use crate::api_error::ApiError;
 
 pub fn highlight_string(
     content: &str,
