@@ -1,46 +1,43 @@
 {
-  "name": "asthobin",
-  "version": "0.2.1",
-  "description": "AsthoBin is a simple website to share pieces of code with a URL, written in Rust.",
-  "license": "GNU General Public License v3.0",
-  "private": true,
-  "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "lint": "eslint . --fix",
-    "bump-dependencies": "pnpm exec ncu -u && pnpm i"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Asthowen/AsthoBin.git"
-  },
-  "author": "Asthowen <contact@asthowen.fr>",
-  "bugs": {
-    "url": "https://github.com/Asthowen/AsthoBin/issues"
-  },
-  "homepage": "https://github.com/Asthowen/AsthoBin#README.md",
-  "dependencies": {
-    "highlight.js": "^11.11.1"
-  },
-  "devDependencies": {
-    "vite": "npm:rolldown-vite@latest",
-    "typescript-eslint": "^8.50.1",
-    "@types/node": "^25.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.50.1",
-    "@typescript-eslint/parser": "^8.50.1",
-    "eslint": "^9.39.2",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-prettier": "^5.5.4",
-    "jiti": "^2.6.1",
-    "npm-check-updates": "^19.2.0",
-    "prettier": "^3.7.4",
-    "tailwindcss": "^4.1.18",
-    "@tailwindcss/postcss": "^4.1.18",
-    "@tailwindcss/vite": "^4.1.18",
-    "typescript": "^5.9.3",
-    "serve-static": "^2.2.1",
-    "@types/serve-static": "^2.2.0"
-  }
+    "name": "asthobin",
+    "version": "0.2.1",
+    "private": true,
+    "description": "AsthoBin is a simple website to share pieces of code with a URL, written in Rust.",
+    "homepage": "https://github.com/Asthowen/AsthoBin#README.md",
+    "bugs": {
+        "url": "https://github.com/Asthowen/AsthoBin/issues"
+    },
+    "license": "GNU General Public License v3.0",
+    "author": "Asthowen <contact@asthowen.fr>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Asthowen/AsthoBin.git"
+    },
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build",
+        "lint": "oxlint .",
+        "fmt": "oxfmt frontend/ts/*.ts frontend/css/*.css vite.config.mts oxfmt.config.ts oxlint.config.ts package.json",
+        "bump-dependencies": "pnpm exec ncu -u && pnpm i"
+    },
+    "dependencies": {
+        "highlight.js": "^11.12.0"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.3.3",
+        "@types/node": "^26.6.5",
+        "@types/serve-static": "^2.2.0",
+        "jiti": "^2.7.0",
+        "lightningcss": "^1.33.0",
+        "npm-check-updates": "^23.1.1",
+        "oxfmt": "^0.74.0",
+        "oxlint": "^1.90.0",
+        "oxlint-tsgolint": "^7.0.2005",
+        "prettier": "^3.9.10",
+        "serve-static": "^2.2.1",
+        "tailwindcss": "^4.3.3",
+        "typescript": "^7.0.2",
+        "vite": "^8.3.5"
+    }
 }

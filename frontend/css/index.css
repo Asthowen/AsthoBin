@@ -9,12 +9,13 @@
 @source "../ts/*.ts";
 
 @font-face {
-    font-family: 'Cascadia Code';
-    src: url('/assets/fonts/CascadiaCode.ttf') format('truetype');
+    font-family: "Cascadia Code";
+    src: url("/assets/fonts/CascadiaCode.ttf") format("truetype");
 }
 
-#codeArea, #codeContainer pre {
-    font-family: 'Cascadia Code', sans-serif;
+#codeArea,
+#codeContainer pre {
+    font-family: "Cascadia Code", sans-serif;
     outline: none;
     resize: none;
     border: 0;
@@ -29,6 +30,7 @@
 #codeArea::-webkit-scrollbar-track {
     background: #202020;
 }
-#codeArea::-webkit-scrollbar-thumb, #codeArea::-webkit-scrollbar-thumb:hover  {
+#codeArea::-webkit-scrollbar-thumb,
+#codeArea::-webkit-scrollbar-thumb:hover {
     background: #303030;
 }
