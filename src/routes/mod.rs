@@ -11,7 +11,6 @@ use actix_files::NamedFile;
 use actix_governor::governor::middleware::NoOpMiddleware;
 use actix_governor::{Governor, GovernorConfig, GovernorConfigBuilder, PeerIpKeyExtractor};
 use actix_web::middleware::from_fn;
-use actix_web::web::Data;
 use actix_web::{Responder, get, web};
 use askama::Template;
 
@@ -34,7 +33,7 @@ async fn favicon() -> actix_web::Result<impl Responder> {
     Ok(NamedFile::open("static/assets/pictures/favicon.png")?)
 }
 
-pub fn setup(config: Data<Config>, service_config: &mut web::ServiceConfig) {
+pub fn setup(config: &Config, service_config: &mut web::ServiceConfig) {
     let governor_conf: GovernorConfig<PeerIpKeyExtractor, NoOpMiddleware> =
         GovernorConfigBuilder::default()
             .seconds_per_request(config.ratelimit_between_save)

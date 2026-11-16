@@ -102,7 +102,7 @@ async fn start() -> Result<(), ApiError> {
         .themes
         .remove("base16-ocean.dark")
         .unwrap_or_else(|| {
-            log::error!("The theme 'base16-ocean.dark' is not present.",);
+            log::error!("The theme 'base16-ocean.dark' is not present.");
             std::process::exit(9);
         });
     theme.settings.background = Some(Color {
@@ -139,7 +139,7 @@ async fn start() -> Result<(), ApiError> {
             .app_data(Data::clone(&syntax_set))
             .app_data(Data::clone(&formated_code_cache))
             .default_service(actix_web::web::to(HttpResponse::Ok))
-            .configure(|service_config| setup(Data::clone(&config), service_config))
+            .configure(|service_config| setup(&config, service_config))
             .wrap(cors)
     })
     .bind(server_host)?

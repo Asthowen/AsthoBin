@@ -48,7 +48,7 @@ And finally, run Docker container:
 ```bash
 docker run -d \
   --name=asthobin \
-  -p 8080:8080 \
+  -p 127.0.0.1:8080:8080 \
   --restart unless-stopped \
   --env-file .env \
   asthowen/asthobin:latest

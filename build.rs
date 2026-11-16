@@ -32,7 +32,7 @@ fn add_assets_file(value: &str, file: &mut File, constant_name: &str, suffix: &s
     .unwrap();
 }
 
-fn generate_scripts_values(scripts: Vec<String>, module: bool) -> String {
+fn generate_scripts_values(scripts: &[String], module: bool) -> String {
     scripts
         .iter()
         .map(|script| {
@@ -45,7 +45,7 @@ fn generate_scripts_values(scripts: Vec<String>, module: bool) -> String {
         .join("\n")
 }
 
-fn generate_styles_values(styles: Vec<String>) -> String {
+fn generate_styles_values(styles: &[String]) -> String {
     styles
         .iter()
         .map(|style| format!(r#"<link rel="stylesheet" href="{style}">"#))
@@ -67,19 +67,19 @@ fn main() -> std::io::Result<()> {
     #[cfg(not(debug_assertions))]
     {
         add_assets_file(
-            &generate_styles_values(vec!["/assets/css/index.css".to_owned()]),
+            &generate_styles_values(&["/assets/css/index.css".to_owned()]),
             &mut file,
             "ALL",
             "CSS",
         );
         add_assets_file(
-            &generate_scripts_values(vec!["/assets/javascript/index.js".to_owned()], false),
+            &generate_scripts_values(&["/assets/javascript/index.js".to_owned()], false),
             &mut file,
             "INDEX",
             "JS",
         );
         add_assets_file(
-            &generate_scripts_values(vec!["/assets/javascript/code.js".to_owned()], false),
+            &generate_scripts_values(&["/assets/javascript/code.js".to_owned()], false),
             &mut file,
             "CODE",
             "JS",
@@ -94,21 +94,21 @@ fn main() -> std::io::Result<()> {
         add_assets_file(
             &format!(
                 "{}\n    {}",
-                generate_scripts_values(vec![format!("{vite_dev_url}/@vite/client"),], true),
-                generate_styles_values(vec![format!("{vite_dev_url}/css/index.css"),])
+                generate_scripts_values(&[format!("{vite_dev_url}/@vite/client"),], true),
+                generate_styles_values(&[format!("{vite_dev_url}/css/index.css"),])
             ),
             &mut file,
             "ALL",
             "CSS",
         );
         add_assets_file(
-            &generate_scripts_values(vec![format!("{vite_dev_url}/ts/index.ts")], true),
+            &generate_scripts_values(&[format!("{vite_dev_url}/ts/index.ts")], true),
             &mut file,
             "INDEX",
             "JS",
         );
         add_assets_file(
-            &generate_scripts_values(vec![format!("{vite_dev_url}/ts/code.ts")], true),
+            &generate_scripts_values(&[format!("{vite_dev_url}/ts/code.ts")], true),
             &mut file,
             "CODE",
             "JS",

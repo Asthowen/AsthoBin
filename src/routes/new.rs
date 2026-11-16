@@ -1,4 +1,4 @@
-use actix_web::http::StatusCode;
+use actix_web::http::{StatusCode, header};
 use actix_web::web::{Bytes, Data, ThinData};
 use actix_web::{HttpMessage, HttpRequest, HttpResponse};
 use dashmap::DashMap;
@@ -68,13 +68,13 @@ pub async fn new(
     formated_code_cache.insert(
         random_url.clone(),
         (
-            highlight_string(&document_content, language, syntect_theme, syntax_set)?,
+            highlight_string(&document_content, language, &syntect_theme, &syntax_set)?,
             language.to_owned(),
             time,
         ),
     );
 
     Ok(HttpResponse::Ok()
-        .append_header(("Location", format!("/{random_url}")))
+        .append_header((header::LOCATION, format!("/{random_url}")))
         .json(json!({"status": "success", "key": random_url})))
 }

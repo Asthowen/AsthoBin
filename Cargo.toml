@@ -15,30 +15,50 @@ codegen-units = 1
 strip = true
 lto = true
 
+[lints.cargo]
+unused_dependencies = "allow"
+
+[lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = { level = "deny", priority = -1 }
+missing_panics_doc = "allow"
+missing_errors_doc = "allow"
+
 [build-dependencies]
-static-files = "0.3.1"
 dotenvy = "0.15.7"
+static-files = "0.3.1"
 
 [dependencies]
-diesel-async = { version = "0.8.0", features = ["postgres", "bb8", "async-connection-wrapper", "migrations"] }
-actix-web-static-files = { version = "4.1.1", default-features = false, features = ["static-files-03"] }
-tokio = { version = "1.52.1", default-features = false, features = ["macros", "rt", "fs"] }
-confik = { version = "0.15.11", default-features = false, features = ["env"] }
-diesel_migrations = "2.3.1"
+actix-cors = "0.7.2"
+actix-files = "0.7.4"
 actix-governor = "0.10.0"
-static-files = "0.3.1"
-serde_json = "1.0.149"
-env_logger = "0.11.10"
-actix-files = "0.6.10"
-actix-cors = "0.7.1"
-actix-web = "4.13.0"
-thiserror = "2.0.18"
-dotenvy = "0.15.7"
-chrono = "0.4.44"
-syntect = "5.3.0"
-serde = "1.0.228"
+actix-web = "4.19.0"
+actix-web-static-files = { version = "4.1.1", default-features = false, features = [
+    "static-files-03",
+] }
+askama = "0.16.1"
+chrono = "0.4.45"
+confik = { version = "0.15.13", default-features = false, features = ["env"] }
 dashmap = "6.1.0"
-askama = "0.15.6"
-diesel = "2.3.7"
-log = "0.4.29"
-rand = "0.10.1"
+diesel = "2.4.0"
+diesel-async = { version = "0.10.0", features = [
+    "async-connection-wrapper",
+    "bb8",
+    "migrations",
+    "postgres",
+] }
+diesel_migrations = "2.4.0"
+dotenvy = "0.15.7"
+env_logger = "0.11.11"
+log = "0.4.35"
+rand = "0.10.3"
+serde = "1.0.229"
+serde_json = "1.0.154"
+static-files = "0.3.1"
+syntect = "5.3.0"
+thiserror = "2.0.21"
+tokio = { version = "1.54.1", default-features = false, features = [
+    "fs",
+    "macros",
+    "rt",
+] }

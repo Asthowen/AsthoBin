@@ -1,8 +1,9 @@
 use actix_web::HttpResponse;
+use actix_web::http::header;
 use actix_web::web::{Data, Path, ThinData};
 use askama::Template;
 use dashmap::DashMap;
-use diesel::prelude::*;
+use diesel::{ExpressionMethods, OptionalExtension, QueryDsl};
 use diesel_async::RunQueryDsl;
 use serde::Deserialize;
 use syntect::highlighting::Theme;
@@ -50,14 +51,14 @@ pub async fn document(
             .optional()?
         else {
             return Ok(HttpResponse::Found()
-                .append_header(("Location", "/"))
+                .append_header((header::LOCATION, "/"))
                 .finish());
         };
 
         if is_raw {
             (content, language)
         } else {
-            let document = highlight_string(&content, &language, syntect_theme, syntax_set)?;
+            let document = highlight_string(&content, &language, &syntect_theme, &syntax_set)?;
 
             formated_code_cache.insert(
                 id.to_owned(),

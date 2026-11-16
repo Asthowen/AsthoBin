@@ -15,9 +15,7 @@ document.getElementById("generateFile")!.onclick = async () => {
     const fileContent = await response.text();
 
     const language =
-        document
-            .getElementById("codeContainer")
-            ?.getAttribute("data-language") ?? "";
+        document.getElementById("codeContainer")?.dataset["language"] ?? "";
 
     const data = new Blob([fileContent], {
         type: "text/plain",

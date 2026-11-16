@@ -12,14 +12,16 @@ document.getElementById("saveButton")!.onclick = async () => {
         method: "POST",
         headers: {
             "Content-Type": "text/plain",
-            Language: detectedLanguage || "txt",
+            Language: detectedLanguage ?? "txt",
         },
         mode: "cors",
         cache: "default",
         body: content,
         redirect: "follow",
     });
+    // oxlint-disable-next-line no-unsafe-assignment
     const responseContent = await response.json();
+    // oxlint-disable-next-line no-unsafe-member-access
     if (responseContent?.status === "error") {
         // oxlint-disable-next-line no-warning-comments
         // TODO
@@ -40,8 +42,6 @@ codeArea.onkeydown = (e) => {
     const end = codeArea.selectionEnd;
 
     codeArea.value =
-        codeArea.value.substring(0, start) +
-        "\t" +
-        codeArea.value.substring(end);
+        codeArea.value.slice(0, start) + "\t" + codeArea.value.slice(end);
     codeArea.selectionStart = codeArea.selectionEnd = start + 1;
 };
